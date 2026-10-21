@@ -18,14 +18,13 @@ coverage
 # Turbo
 .turbo
 
-# Vercel
-.vercel
-
 # Build Outputs
 .next/
 out/
 build
 dist
+.astro/
+.wrangler/
 
 
 # Debug
@@ -36,3 +35,6 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Local verification artifacts
+.openchamber/

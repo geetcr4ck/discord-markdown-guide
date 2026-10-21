@@ -11,8 +11,7 @@
         ".env*"
       ],
       "outputs": [
-        "dist/**",
-        ".vercel/output/**"
+        "dist/**"
       ]
     },
     "lint": {
