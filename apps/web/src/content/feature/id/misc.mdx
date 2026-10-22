@@ -1,0 +1,84 @@
+---
+title: "Tautan, stempel waktu & perintah"
+description: "Timestamp, tautan pesan dan tautan berteks, slash command, serta pseudo-mention yang dipakai Discord di antarmukanya sendiri."
+intro: "Tambahkan stempel waktu, tautan, slash command, atau jalan pintas antarmuka Discord langsung dari kotak pesan."
+mistakes:
+  - "Stempel waktu 13 digit itu milidetik; bagi dengan 1000 sebelum menyusun tokennya."
+  - "Slash command harus memulai pesan; garis miring di tengah kalimat jadi teks biasa."
+  - "Tautan berteks butuh URL http(s); tanpa skemanya, tautannya jadi teks biasa."
+order: 8
+sample: "[text](https://example.com)"
+---
+
+import Example from '../../../components/example.astro'
+
+Sebagian format Discord menunjuk ke luar pesan: timestamp yang menyesuaikan diri dengan lokasi pembaca, tautan ke sebuah perintah, dan jalan pintas ke layar bawaan server. Discord menulis token ini untukmu saat kamu memakai pemilihnya, tapi kamu juga bisa mengetiknya sendiri.
+
+## Timestamp
+
+Timestamp adalah waktu Unix dalam detik di antara tanda kurung sudut. Tambahkan huruf format setelah titik dua kedua untuk memilih bentuknya.
+
+<Example
+  source="<t:1700000000:F>"
+  caption="Huruf formatnya menentukan bentuknya; lokasi pembaca menentukan kata-katanya dan zona waktunya."
+/>
+
+| Huruf | Menampilkan |
+| --- | --- |
+| `t` | Waktu singkat |
+| `T` | Waktu panjang, dengan detik |
+| `d` | Tanggal singkat |
+| `D` | Tanggal panjang |
+| `f` | Tanggal dan waktu singkat |
+| `F` | Tanggal dan waktu panjang, dengan nama hari |
+| `R` | Waktu relatif |
+
+Discord mengubah angkanya ke zona waktu dan format tanggal masing-masing pembaca, jadi satu pesan terbaca benar di semua locale. Waktu yang sama bisa ditampilkan sebagai jam, tanggal kalender, atau frasa relatif, jadi pilih bentuk yang cocok dengan kalimatmu. Bentuk `R` adalah yang relatif, misalnya `in 2 hours` atau `2 years ago`.
+
+## Slash command
+
+Ketik `/` di awal pesan untuk membuka pemilih perintah. Pilih perintah dari daftar; Discord memasukkan nama perintahnya untukmu. Pemilihnya juga menampilkan deskripsi dan opsi perintah itu. Perintah aplikasi hanya berjalan kalau aplikasinya ada di server tersebut. Garis miring yang diketik di tengah kalimat jadi teks biasa; perintahnya harus memulai pesan.
+
+Kamu juga bisa menunjuk perintah aplikasi di teks dengan `</name:id>`, di mana id-nya milik aplikasi tersebut. Discord menampilkan token itu sebagai `/name`.
+
+<Example
+  source="</info:905987126099836938>"
+  discord={{ slashCommand: '/info' }}
+  caption="Tokennya jadi chip perintah; id-nya memilih aplikasinya."
+/>
+
+## Pseudo-mention
+
+Tautan di antarmuka Discord sendiri memakai bentuk tanda kurung sudut yang sama. Bentuknya mirip mention, tapi membuka layar server, bukan memberi ping ke seseorang.
+
+- `<id:info>` atau `<id:guide>` membuka panduan server.
+- `<id:browse>` membuka layar penelusuran channel.
+- `<id:customize>` membuka channel dan role.
+
+<Example
+  source="<id:guide> · <id:browse> · <id:customize>"
+  caption="Setiap token jadi tautan menuju salah satu layar server."
+/>
+
+Token ini berupa nama tetap, bukan angka. Isinya sama di setiap server yang punya layar yang sesuai.
+
+## Tautan pesan
+
+Tautan pesan berisi id server, channel, dan pesan dalam urutan itu: `https://discord.com/channels/<server>/<channel>/<message>`. Klik kanan sebuah pesan dan pilih Copy Message Link untuk mendapat URL persisnya. URL-nya teks biasa; Discord mengubahnya jadi tautan saat pesan terkirim. Salin tautannya dari klien; mengetik id-nya manual mudah salah.
+
+Tautannya hanya berfungsi untuk orang yang bisa melihat channel itu; ini tidak menembus izin.
+
+## Tautan berteks
+
+Tautan berteks menaruh label yang mudah dibaca di atas URL: `[teks](https://example.com)`. Pembaca melihat teksnya; URL terbuka saat diklik.
+
+URL-nya harus diawali `http://` atau `https://`. Tanpa skema itu, Discord tidak mengubah tokennya jadi tautan.
+
+<Example
+  source="[panduan](https://example.com)"
+  caption="Label adalah yang dilihat pembaca; URL adalah tujuan tautannya."
+/>
+
+## Perhatikan
+
+Timestamp memakai satuan detik, bukan milidetik. Nilai 13 digit itu dalam milidetik; bagi dengan 1000 sebelum ditempel, atau tanggalnya akan meleset puluhan ribu tahun. Nilai 10 digit adalah bentuk aman untuk tanggal di sekitar hari ini. `Date.now()` di JavaScript mengembalikan milidetik, jadi bagi dulu sebelum menyusun tokennya.

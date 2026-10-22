@@ -1,0 +1,69 @@
+---
+title: "Mentions"
+description: "Ping a user, role, channel or custom emoji by its id."
+intro: "Ping a person, role, or channel, or show a custom emoji, with a token built from its id."
+mistakes:
+  - "`<@name>` stays plain text; paste the numeric id instead."
+  - "`<@123>` without `&` is a user, not a role; write `<@&123>`."
+  - "A raw bracket token usually means a name or a guessed id; copy the id with Developer Mode."
+order: 7
+sample: "@everyone"
+---
+
+import Example from '../../../components/example.astro'
+
+A mention is an id inside angle brackets. Discord swaps the id for a name and makes the result a link. Use a mention when the person or channel needs a notification or a jump; use plain text when you only want the name.
+
+## Users
+
+Put `@` and the user's numeric id between angle brackets. Use the id, not the username.
+
+<Example
+  source="<@378293909610037252>"
+  discord={{ user: '@geetcr4ck' }}
+  caption="The numeric id becomes a mention chip with the user's name."
+/>
+
+A user mention notifies the person, subject to their notification settings, and the id stays valid when the username changes. A user mention can sit inside a sentence like any other word. The chip shows the name the reader knows, which can differ between servers.
+
+## Roles and channels
+
+A role uses `@&` instead of `@`. The ampersand is what separates a role from a user, so keep it in place. A role mention notifies the members who have that role, if the role allows mentions.
+
+<Example
+  source="<@&378293909610037252>"
+  discord={{ role: '@Moderator' }}
+  caption="The role id becomes a role mention, with the ampersand out of sight."
+/>
+
+A channel uses `#` and the channel's id. A channel mention creates a link that jumps to the channel; it does not notify the channel.
+
+<Example
+  source="<#378293909610037252>"
+  discord={{ channel: '#general' }}
+  caption="The channel id becomes a clickable channel link."
+/>
+
+## Custom emoji
+
+A custom emoji uses a colon, its name, another colon, and its id. The name is a label; the id selects the image. The emoji renders at text size in the message.
+
+<Example
+  source="<:duck:1263836954789806154>"
+  discord={{ emoji: '🦆' }}
+  caption="The emoji renders from its id; the name is only a label."
+/>
+
+A custom emoji belongs to the server that owns it. A reader who cannot use that emoji may see the name instead of the image, even though the token is valid.
+
+## Everyone and here
+
+`@everyone` and `@here` are plain text, with no brackets or id. `@everyone` reaches everyone who can see the channel; `@here` reaches the members who are online. Both are loud, so use them for announcements rather than routine replies. You need permission to mention everyone in a server.
+
+## Finding an id
+
+Turn on Developer Mode under User Settings, then Advanced. Right-click a user, role, or channel and choose Copy ID. On mobile, long-press the item instead of right-clicking. The id is a long number; paste it between the brackets exactly as copied.
+
+## Watch out
+
+`<@name>` is not a mention. The token takes a numeric id, so a username between the brackets stays as plain text. The same applies to `<@&name>` and `<#name>`: roles and channels need their ids too. If a mention shows as raw brackets, check for a name where the number should be.

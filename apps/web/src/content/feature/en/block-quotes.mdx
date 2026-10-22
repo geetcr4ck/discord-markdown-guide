@@ -1,0 +1,62 @@
+---
+title: "Block quotes"
+description: "Quote a single line, a log, or a whole conversation."
+intro: "Set a line or a whole passage apart as a quote, with a rule down the side and dimmed text."
+mistakes:
+  - "A blank line without `>` ends the quote; use a bare `>` to continue it."
+  - "`>>` is not a nested quote; Discord shows the extra marker as text."
+  - "Quote a code block by prefixing every line, including both fences."
+order: 3
+sample: "> quoted line"
+---
+
+import Example from '../../../components/example.astro'
+
+A block quote sets text behind a vertical rule and dims it, so an excerpt reads as separate from your reply. Use it when you answer a specific line, paste a log, or preserve someone else's wording. Discord adds the rule for you; the marker never reaches the reader.
+
+## One line
+
+Start the line with `>` and a space, then the text. The marker has to be the first character on the line. The quote ends at the line break: the next line without `>` is ordinary text, and a `>` with no space stays as a literal character.
+
+<Example
+  source="> deploy is blocked until the migration finishes"
+  caption="The marker and the space drop; the rule stays at the left."
+/>
+
+## Several lines
+
+Prefix every line with `>` and a space. Consecutive quoted lines join into one block, so the rule runs down the whole passage.
+
+<Example
+  source={"> first line\n> second line\n> third line"}
+  caption="Each line carries its own marker; together they form one quote."
+/>
+
+A single `>>>` at the start of a line quotes everything after it to the end of the message. That is quicker for a long log, but the quote only stops when the message does. Per-line markers let you stop exactly where you want.
+
+## Nested quotes
+
+Discord does not stack quote levels. A second `>` does not add a deeper bar the way it does in some forum software, so `>>` is not a nested quote. If you paste a quote from a platform that uses `>>`, expect the extra marker to show as text.
+
+For a reply chain, quote each message as its own block and separate the blocks with a blank line. The result is a series of quotes at the same level, which is easier to read than a stack of bars.
+
+## Quoting a code block
+
+Prefix the opening fence, every line of code, and the closing fence with `>` and a space. The code block then sits inside the quote and keeps its monospace layout.
+
+<Example
+  source={"> ```js\n> const total = price * quantity\n> ```"}
+  caption="The fence and the code all carry the marker, so the block stays inside the quote."
+/>
+
+A blank line inside the code needs the marker too. Without it, the quote ends and the rest of the code falls outside.
+
+## Paragraphs
+
+A line containing only `>` is an empty quoted line. Use it between two paragraphs to keep them inside one quote; the rule continues down the left side and the pause stays part of the block. The next `> ` line starts the second paragraph.
+
+This is how you quote a long passage without turning every line into a separate quote. The empty marker is the difference between a pause and an ending.
+
+## Watch out
+
+A blank line with no `>` ends the quote. If you want the quote to continue after a pause, put a bare `>` on the empty line instead of leaving it empty. Without that marker, the next line starts outside the quote, even if you add `>` again later; that later line begins a new block.

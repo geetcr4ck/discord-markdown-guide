@@ -1,0 +1,70 @@
+---
+import type { Lang } from '../../i18n/routes';
+import { locales, play } from '../../i18n/routes';
+import { t } from '../../i18n/ui';
+import Sheet from '../../layouts/Sheet.astro';
+import CheatSheet from '../../components/cheat-sheet.astro';
+
+export async function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const translate = t(lang);
+
+const homeMeta = {
+  en: {
+    title: 'Discord Markdown cheat sheet',
+    description:
+      'Every Discord Markdown rule, the typed form and the Discord result side by side, ready to copy.',
+  },
+  id: {
+    title: 'Contekan Markdown Discord',
+    description:
+      'Semua aturan Markdown Discord, bentuk yang diketik dan hasilnya berdampingan, siap disalin.',
+  },
+}[lang];
+---
+
+<Sheet
+  title={homeMeta.title}
+  description={homeMeta.description}
+  sheetNumber="00"
+  lang={lang}
+  tapeFlag={true}
+>
+  <div class="home-shell max-w-sheet mx-auto px-5 md:px-10 pt-10 md:pt-16">
+    <header class="home-intro">
+      <div class="home-intro__copy">
+        <p class="home-kicker">
+          <span class="home-kicker__mark" aria-hidden="true"></span>
+          {translate('home.kicker')}
+        </p>
+
+        <h1 class="home-title">{translate('home.title')}</h1>
+
+        <p class="home-lede">{translate('home.lede')}</p>
+      </div>
+
+      <div class="home-intro__action">
+        <a class="home-cta" href={play(lang)}>
+          {translate('home.cta')}
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </header>
+
+    <div id="tape-flag" class="home-tape" hidden>
+      <div class="home-tape__resume">
+        <span class="home-tape__dot" aria-hidden="true"></span>
+        <span class="home-tape__label">{translate('home.flag')}</span>
+        <a id="tape-flag-link" class="home-tape__link" href="#" hidden></a>
+      </div>
+      <span class="home-tape__cta" aria-hidden="true">
+        {translate('home.flagCta')} &rarr;
+      </span>
+    </div>
+
+    <CheatSheet lang={lang} />
+  </div>
+</Sheet>

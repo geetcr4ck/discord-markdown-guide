@@ -1,38 +1,50 @@
 import { defineConfig } from "astro/config";
-import vercel from "@astrojs/vercel/static";
-import mdx from '@astrojs/mdx';
+import mdx from "@astrojs/mdx";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import type { RehypePlugins } from "astro";
-
-// https://docs.astro.build/en/guides/markdown-content/#extending-markdown-config-from-mdx
 import tailwind from "@astrojs/tailwind";
-
 import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
 
-// https://astro.build/config
+// Static output only: Cloudflare Pages serves apps/web/dist. No adapter.
 export default defineConfig({
-  site: "https://discord-md.vercel.app",
+  site: "https://discord-markdown-guide.pages.dev",
   trailingSlash: "never",
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "id"],
+    routing: {
+      prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
+    },
+  },
   markdown: {
     shikiConfig: {
-      theme: "github-dark-dimmed"
+      theme: "github-dark-dimmed",
     },
-    rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, {
-      behavior: "wrap",
-      content: {
-        type: "element",
-        tagName: "div",
-        properties: {
-          class: "anchor-link"
-        }
-      }
-    }]] as RehypePlugins
+    rehypePlugins: [
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: "wrap",
+          properties: { class: "anchor-link" },
+        },
+      ],
+    ] as RehypePlugins,
   },
-  adapter: vercel({
-    webAnalytics: {
-      enabled: true
-    }
-  }),
-  integrations: [tailwind(), mdx(), react()]
+  integrations: [
+    tailwind(),
+    mdx(),
+    react(),
+    sitemap({
+      // The root page is only a redirect to /en.
+      filter: (page) => page !== "https://discord-markdown-guide.pages.dev/",
+      i18n: {
+        defaultLocale: "en",
+        locales: { en: "en", id: "id" },
+      },
+    }),
+  ],
 });

@@ -1,0 +1,84 @@
+---
+title: "Links, timestamps & commands"
+description: "Timestamps, message and masked links, slash commands and the pseudo-mentions Discord uses in its own interface."
+intro: "Add a timestamp, a link, a slash command, or one of Discord's own interface shortcuts without leaving the message box."
+mistakes:
+  - "A 13-digit timestamp is in milliseconds; divide by 1000 before you build the token."
+  - "A slash command has to start the message; a slash in the middle is plain text."
+  - "A masked link needs an http(s) URL; without the scheme it stays plain text."
+order: 8
+sample: "[text](https://example.com)"
+---
+
+import Example from '../../../components/example.astro'
+
+Some of Discord's formatting points outside the message: a timestamp that localizes itself, a link to a command, and shortcuts into the server's own screens. Discord writes these tokens for you when you use its pickers, but you can also type them by hand.
+
+## Timestamps
+
+A timestamp is a Unix time in seconds between angle brackets. Add a format letter after a second colon to choose the shape.
+
+<Example
+  source="<t:1700000000:F>"
+  caption="The format letter sets the shape; the reader's locale sets the wording and timezone."
+/>
+
+| Letter | Shows |
+| --- | --- |
+| `t` | Short time |
+| `T` | Long time, with seconds |
+| `d` | Short date |
+| `D` | Long date |
+| `f` | Short date and time |
+| `F` | Long date and time, with the weekday |
+| `R` | Relative time |
+
+Discord converts the number to each reader's own timezone and date format, so one message reads correctly in every locale. The same instant can be shown as a clock time, a calendar date, or a relative phrase, so pick the form that fits the sentence. The `R` form is the relative one, such as `in 2 hours` or `2 years ago`.
+
+## Slash commands
+
+Type `/` at the start of a message to open the command picker. Pick a command from the list; Discord inserts the command name for you. The picker also shows the command's description and options. An app command only runs if that app is in the server. A slash typed in the middle of a sentence is plain text; the command has to start the message.
+
+You can also point at an app command in text with `</name:id>`, where the id belongs to the app. Discord renders the token as `/name`.
+
+<Example
+  source="</info:905987126099836938>"
+  discord={{ slashCommand: '/info' }}
+  caption="The token becomes a command chip; the id selects the app."
+/>
+
+## Pseudo-mentions
+
+Discord's own interface links use the same angle-bracket shape. They look like mentions but open a server screen instead of pinging someone.
+
+- `<id:info>` or `<id:guide>` opens the server guide.
+- `<id:browse>` opens channel browsing.
+- `<id:customize>` opens channels and roles.
+
+<Example
+  source="<id:guide> · <id:browse> · <id:customize>"
+  caption="Each token becomes a link into a server screen."
+/>
+
+These tokens are fixed names, not numbers. They are the same in every server that has the matching screen.
+
+## Message links
+
+A message link has the server, channel, and message ids in that order: `https://discord.com/channels/<server>/<channel>/<message>`. Right-click a message and choose Copy Message Link to get the exact URL. The URL is plain text; Discord turns it into a link when the message sends. Copy the link from the client; typing the ids by hand is easy to get wrong.
+
+The link only works for people who can see the channel; it does not bypass permissions.
+
+## Masked links
+
+A masked link puts a readable label over a URL: `[text](https://example.com)`. The reader sees the text; the URL opens when they click.
+
+The URL must start with `http://` or `https://`. Without the scheme, Discord does not turn the token into a link.
+
+<Example
+  source="[the guide](https://example.com)"
+  caption="The label is what the reader sees; the URL is where the link goes."
+/>
+
+## Watch out
+
+A timestamp takes seconds, not milliseconds. A 13-digit value is in milliseconds; divide it by 1000 before you paste it, or the date lands tens of thousands of years away. A 10-digit value is the safe shape for dates near today. JavaScript's `Date.now()` returns milliseconds, so divide before you build the token.

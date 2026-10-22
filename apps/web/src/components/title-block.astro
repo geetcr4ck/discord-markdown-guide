@@ -1,0 +1,55 @@
+---
+import type { Lang } from '../i18n/routes';
+import { t } from '../i18n/ui';
+import { REPO_URL } from '../constants';
+
+interface Props {
+  sheetNumber: string;
+  lang: Lang;
+}
+
+const { sheetNumber, lang } = Astro.props;
+const translate = t(lang);
+---
+
+<footer class="mt-20 pt-8 pb-12 border-t border-[var(--rule)]">
+  <div class="max-w-sheet mx-auto px-5 md:px-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-[var(--ink3)] font-mono mb-4 gap-2">
+      <div>
+        <span>{translate('site.name')}</span>
+        <span class="mx-2" aria-hidden="true">·</span>
+        <a href={REPO_URL} target="_blank" rel="noopener noreferrer" class="hover:text-[var(--blue)] underline underline-offset-2">
+          GitHub
+        </a>
+      </div>
+      <div>
+        <span>{translate('titleBlock.notice')}</span>
+      </div>
+    </div>
+
+    <!-- The 4-column ruled drawing title block -->
+    <div class="border border-[var(--ink)] grid grid-cols-2 md:grid-cols-4 font-mono text-[0.6875rem] tracking-wider uppercase bg-[var(--paper2)]">
+      <div class="p-3 border-r border-b md:border-b-0 border-[var(--ink)] flex flex-col justify-center">
+        <span class="text-[var(--ink3)] text-[0.625rem]">{translate('titleBlock.drawn')}</span>
+        <span class="text-[var(--ink)] font-medium">geetcr4ck</span>
+      </div>
+      <div class="p-3 md:border-r border-b md:border-b-0 border-[var(--ink)] flex flex-col justify-center">
+        <span class="text-[var(--ink3)] text-[0.625rem]">{translate('titleBlock.scale')}</span>
+        <span class="text-[var(--ink)] font-medium">1:1</span>
+      </div>
+      <div class="p-3 border-r border-[var(--ink)] flex flex-col justify-center">
+        <span class="text-[var(--ink3)] text-[0.625rem]">{translate('titleBlock.revision')}</span>
+        <span class="text-[var(--ink)] font-medium">2026.10</span>
+      </div>
+      <div class="p-3 flex items-center justify-between">
+        <div class="flex flex-col justify-center">
+          <span class="text-[var(--ink3)] text-[0.625rem]">{translate('titleBlock.sheet')}</span>
+          <span class="text-[var(--ink)] font-medium">{sheetNumber} / 09</span>
+        </div>
+        <span class="font-bold text-xs text-[var(--ink)] border border-[var(--ink)] px-1.5 py-0.5 bg-[var(--paper)]">
+          {lang.toUpperCase()}
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>

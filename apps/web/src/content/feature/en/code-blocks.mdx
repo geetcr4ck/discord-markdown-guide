@@ -1,0 +1,58 @@
+---
+title: "Code blocks"
+description: "Inline code and fenced blocks that keep every character literal."
+intro: "Show code exactly as you typed it, inline in a sentence or in a fenced block that keeps every line break."
+mistakes:
+  - "An unclosed fence turns the rest of the message into code; add the closing fence."
+  - "Use two backticks around inline code that contains a backtick."
+  - "If the code contains three backticks, open and close the fence with four."
+order: 4
+sample: "`inline code`"
+---
+
+import Example from '../../../components/example.astro'
+
+Backticks turn off every other rule. What sits between them reaches the reader exactly as you typed it, spacing included. Use inline code for a word in a sentence and a fenced block for anything with a line break.
+
+## Inline code
+
+Use one backtick on each side for a command, a variable, or a short expression inside a sentence. The backticks vanish, and the text keeps its monospace face.
+
+<Example
+  source="`npm run dev`"
+  caption="One backtick per side keeps the command literal inside a sentence."
+/>
+
+Inline code stays on one line. If the code itself contains a backtick, wrap the span in two backticks instead, so the inner one stays literal.
+
+## Fenced blocks
+
+Put three backticks on a line of their own, then the code, then three more backticks on a line of their own. The fence lines vanish, and the lines between keep their breaks and indentation.
+
+<Example
+  source={"```\nconst total = price * quantity\nconsole.log(total)\n```"}
+  caption="The two fence lines are structural; they never reach the reader."
+/>
+
+Everything inside is literal. Bold markers, mention tokens, and spoiler bars all stay as characters. You can put a fenced block above or below ordinary text in the same message; the fence only governs the lines between its markers. A blank line inside the block is part of the code, not the end of it.
+
+## Language tags
+
+Put a language id immediately after the opening fence, on the same line. The id selects the highlighter and is not part of the code. Use lowercase; it is the form the highlighter expects. The syntax highlighting sheet lists the ids this guide uses.
+
+<Example
+  source={"```bash\npnpm install\npnpm dev\n```"}
+  caption="The id after the fence selects the highlighter; it is not part of the code."
+/>
+
+Without an id the block still renders; it has no colour. An id the highlighter does not recognise also leaves the block plain.
+
+## Backticks inside a fence
+
+A fence closes at the first run of three backticks. If the code itself contains that run, open and close with four backticks instead. The extra one is structural and does not appear in the code. Use the same number on both ends so the block closes where you expect.
+
+If your client shows the extra backtick as part of the code, show the sample as inline code instead.
+
+## Watch out
+
+An unclosed fence swallows the rest of the message. Every line after the opening fence stays inside the block until you close it, and a blank line does not end it. A missing final fence turns the remainder of your message into code. If a message looks like it never ends, add the closing fence at the bottom.

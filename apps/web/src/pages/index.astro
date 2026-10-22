@@ -1,36 +1,57 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/feature-card.astro'
-
-import { getCollection } from "astro:content";
-
-const allFeatures = await getCollection("feature");
+// Root redirect to /en
 ---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0;url=/en" />
+    <link rel="canonical" href="https://discord-markdown-guide.pages.dev/en" />
+    <meta name="robots" content="noindex" />
+    <title>Redirecting to /en...</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
 
-<Layout title="Discord Markdown">
-	<h1 class="text-3xl font-bold mb-4">Explore</h1>
-	<div class="features">
-		{allFeatures.map((feature) => (
-			<Card title={feature.data.title} body={feature.data.description} href={`/feature/${feature.slug}`} />
-		))}
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #F2EFE7;
+        color: #16171B;
+        font-family: "IBM Plex Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
 
-		<Card title="Playground" body="Play with discord markdown" href="/play" />
-	</div>
-	<a href="https://github.com/Hacksore/discord-md" target="_blank"><p class="mt-4">source code</p></a>
-	<a href="https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline" target="_blank"><p>discord official docs</p></a>
-	<a href="https://gist.github.com/matthewzring/9f7bbfd102003963f9be7dbcf7d40e51" target="_blank"><p>markdown 101 gist</p></a>
-</Layout>
+      body {
+        padding: 40px;
+        text-align: center;
+      }
 
-<style>
+      a {
+        color: #1F4FD8;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
 
-	a {
-		text-decoration: none;
-		color: #c1c1c1
-	}
+      @media (prefers-color-scheme: dark) {
+        :root {
+          color-scheme: dark;
+        }
 
-	.features {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-		gap: 1rem;
-	}
-</style>
+        html,
+        body {
+          background-color: #1A1A1A;
+          color: #E8E8E8;
+        }
+
+        a {
+          color: #6EA8FE;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <p>Redirecting to <a href="/en">Discord Markdown Guide</a>...</p>
+  </body>
+</html>

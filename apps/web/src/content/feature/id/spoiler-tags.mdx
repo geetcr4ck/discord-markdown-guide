@@ -1,0 +1,54 @@
+---
+title: "Tag spoiler"
+description: "Sembunyikan teks, atau satu blok penuh, di balik satu klik."
+intro: "Sembunyikan satu kata, satu frasa, atau satu blok penuh di balik penutup yang terbuka saat diklik."
+mistakes:
+  - "`|| text ||` dengan spasi di dalam garis bisa tetap terlihat; tempelkan garisnya ke teks."
+  - "Satu garis bukan spoiler; penandanya selalu berpasangan."
+  - "Spoiler cuma penutup visual, bukan privasi; jangan taruh kata sandi atau token."
+order: 6
+sample: "||hidden||"
+---
+
+import Example from '../../../components/example.astro'
+
+Spoiler menutupi isinya sampai pembaca mengkliknya. Teksnya tetap ada di dalam pesan; penutupnya cuma tampilan, bukan kunci. Pakai untuk hal yang ingin diungkap, seperti plot cerita, sebuah solusi, atau hadiah, bukan untuk tata letak.
+
+## Inline
+
+Bungkus teksnya dengan dua garis di tiap sisi. Penandanya bisa berada di tengah kalimat, jadi kamu bisa menyembunyikan satu kata atau satu frasa. Penutupnya berlaku untuk satu kata, satu frasa, atau satu baris penuh; garisnya hanya menandai bagian yang kamu pilih. Teks di luar garisnya tetap terlihat, dan garisnya sendiri hilang saat pesan terkirim.
+
+<Example
+  source="The final boss is ||the gardener||."
+  caption="Hanya teks di antara garisnya yang tertutup."
+/>
+
+## Satu blok penuh
+
+Pasangan garis yang sama bisa membungkus beberapa baris. Taruh garis pembuka sebelum baris pertama dan garis penutup setelah baris terakhir; penutupnya lalu membentang di seluruh bagian itu.
+
+<Example
+  source={"||The surprise guest is\narriving at eight||"}
+  caption="Kedua baris berada di bawah satu penutup karena garisnya membungkus seluruh blok."
+/>
+
+Tautan bisa berada di dalam garisnya seperti teks lain. Pembaca melihat penutupnya dulu, baru tautannya setelah diklik. Garis pembuka dan penutupnya bisa sebaris dengan teksnya, atau di barisnya sendiri di sekeliling teks itu.
+
+## Bersama format lain
+
+Tebal, miring, dan penanda lain tetap berfungsi di dalam spoiler. Discord meng-parse bagian dalamnya lebih dulu, lalu menaruh hasilnya di bawah penutup. Taruh garisnya di luar penanda gaya kalau kamu ingin seluruh bagian bergaya itu tertutup.
+
+<Example
+  source="||**spoiler** with *style*||"
+  caption="Penanda di dalamnya di-parse lebih dulu; penutupnya menyembunyikan hasilnya."
+/>
+
+Di dalam inline code atau blok berpagar, garisnya jadi karakter biasa. Kode memang sudah mematikan format, jadi tidak ada spoiler yang terbentuk di sana.
+
+## Bukan alat privasi
+
+Spoiler cuma penutup visual, bukan batas keamanan. Teksnya tetap ada di pesan, dan siapa pun bisa mengklik, menyalin, atau membacanya lewat klien yang mengabaikan penutupnya. Penutupnya digambar oleh klien, jadi klien yang dimodifikasi bisa melewatinya sepenuhnya. Teknologi bantu tetap bisa menjangkau teksnya. Jangan taruh kata sandi, token, atau data pribadi di dalam spoiler.
+
+## Perhatikan
+
+Tempelkan garisnya rapat ke teks. Spasi tepat di dalam `||` bisa membuat spoiler gagal terbentuk di beberapa klien, sehingga garisnya tetap terlihat. Tulis `||text||`, bukan `|| text ||`. Satu garis di tiap sisi tidak cukup; penandanya selalu berpasangan. Periksa juga karakternya: broken bar atau garis miring bukan pipe. Kalau kamu perlu menampilkan garisnya sebagai teks, taruh di inline code.

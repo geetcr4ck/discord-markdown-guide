@@ -1,0 +1,83 @@
+---
+import type { Lang } from '../i18n/routes';
+import { article } from '../i18n/routes';
+import { t } from '../i18n/ui';
+
+export interface IndexEntry {
+  order: number;
+  title: string;
+  slug: string;
+}
+
+interface Props {
+  entries: IndexEntry[];
+  lang: Lang;
+  currentSlug?: string;
+  headings?: { depth: number; slug: string; text: string }[];
+}
+
+const { entries, lang, currentSlug, headings = [] } = Astro.props;
+const translate = t(lang);
+
+const sortedEntries = [...entries].sort((a, b) => a.order - b.order);
+const currentEntry = sortedEntries.find((entry) => entry.slug === currentSlug);
+const currentOrder = currentEntry
+  ? currentEntry.order < 10
+    ? `0${currentEntry.order}`
+    : `${currentEntry.order}`
+  : '01';
+---
+
+<nav aria-label={translate('nav.index')} class="space-y-4">
+  <div class="text-[0.6875rem] font-mono tracking-widest uppercase text-[var(--ink3)]">
+    {translate('sheet.detail')} {currentOrder}
+  </div>
+
+  <div class="flex flex-col space-y-1">
+    {sortedEntries.map((entry) => {
+      const isCurrent = entry.slug === currentSlug;
+      const sheetNum = entry.order < 10 ? `0${entry.order}` : `${entry.order}`;
+      const entryUrl = article(lang, entry.slug);
+
+      return (
+        <a
+          href={entryUrl}
+          class={`flex items-center justify-between py-1 px-1.5 -mx-1.5 font-mono text-xs hover:text-[var(--blue)] transition-colors ${
+            isCurrent ? 'text-[var(--blue)] font-medium' : 'text-[var(--ink2)]'
+          }`}
+          aria-current={isCurrent ? 'page' : undefined}
+        >
+          <span class="flex items-center gap-2 min-w-0">
+            <span class="w-1.5 h-1.5 shrink-0 flex items-center justify-center" aria-hidden="true">
+              {isCurrent && <span class="w-1.5 h-1.5 bg-[var(--blue)] inline-block" />}
+            </span>
+            <span class="text-[var(--ink3)] shrink-0">{sheetNum}</span>
+            <span class="font-sans text-xs truncate max-w-[140px] text-[var(--ink)]">
+              {entry.title}
+            </span>
+          </span>
+          <span class="text-[var(--ink3)] text-[0.625rem]" aria-hidden="true">&rarr;</span>
+        </a>
+      );
+    })}
+  </div>
+
+  {headings.length > 0 && (
+    <>
+      <div class="h-px bg-[var(--rule)] my-4" />
+      <div class="text-[0.6875rem] font-mono tracking-widest uppercase text-[var(--ink3)] mb-2">
+        {translate('sheet.onThisSheet')}
+      </div>
+      <nav aria-label={translate('sheet.onThisSheet')} class="flex flex-col space-y-1.5 text-xs">
+        {headings.map((heading) => (
+          <a
+            href={`#${heading.slug}`}
+            class="text-[var(--ink2)] hover:text-[var(--blue)] transition-colors leading-snug truncate"
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </>
+  )}
+</nav>

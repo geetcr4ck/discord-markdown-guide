@@ -1,0 +1,163 @@
+---
+import { getCollection } from 'astro:content';
+import type { Lang } from '../../i18n/routes';
+import { article } from '../../i18n/routes';
+import { t } from '../../i18n/ui';
+import Sheet from '../../layouts/Sheet.astro';
+import SheetIndex from '../../components/sheet-index.astro';
+import Example from '../../components/example.astro';
+
+export async function getStaticPaths() {
+  const allFeatures = await getCollection('feature');
+  return allFeatures.map((entry) => {
+    const parts = entry.slug.split('/');
+    const lang = parts.length > 1 ? parts[0] : 'en';
+    const slug = parts.length > 1 ? parts.slice(1).join('/') : entry.slug;
+    return {
+      params: { lang, slug },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
+const { lang, slug } = Astro.params as { lang: Lang; slug: string };
+const translate = t(lang);
+
+const allFeatures = await getCollection('feature');
+const currentLocaleEntries = allFeatures.filter((e) => {
+  const [entryLang] = e.slug.split('/');
+  return entryLang === lang;
+});
+
+const entriesToUse = currentLocaleEntries;
+
+const sortedEntries = entriesToUse.map((e) => {
+  const parts = e.slug.split('/');
+  const cleanSlug = parts.length > 1 ? parts.slice(1).join('/') : e.slug;
+  return {
+    order: e.data.order,
+    title: e.data.title,
+    slug: cleanSlug,
+    description: e.data.description,
+    sample: e.data.sample,
+  };
+}).sort((a, b) => a.order - b.order);
+
+const order = entry.data.order;
+const sheetNum = order < 10 ? `0${order}` : `${order}`;
+const h2Headings = headings.filter((h) => h.depth === 2);
+
+// Prev and next
+const currentIndex = sortedEntries.findIndex((e) => e.slug === slug);
+const prevEntry = currentIndex > 0 ? sortedEntries[currentIndex - 1] : null;
+const nextEntry = currentIndex >= 0 && currentIndex < sortedEntries.length - 1 ? sortedEntries[currentIndex + 1] : null;
+
+function splitMistake(mistake: string) {
+  return mistake.split(/(`[^`]+`)/g).map((part) =>
+    part.startsWith('`') ? { code: true, text: part.slice(1, -1) } : { code: false, text: part }
+  );
+}
+---
+
+<Sheet
+  title={entry.data.title}
+  description={entry.data.description}
+  sheetNumber={sheetNum}
+  lang={lang}
+  rail={true}
+>
+  <div class="max-w-sheet mx-auto px-5 md:px-10 pt-10 md:pt-16">
+    <div class="grid grid-cols-1 lg:grid-cols-[220px,1fr] gap-8 lg:gap-12 items-start">
+      <!-- Left Sticky Rail (Desktop) -->
+      <aside class="hidden lg:block sticky top-24">
+        <SheetIndex
+          entries={sortedEntries}
+          lang={lang}
+          currentSlug={slug}
+          headings={h2Headings}
+        />
+      </aside>
+
+      <!-- Main Sheet Content -->
+      <article class="min-w-0 flex-1">
+        <!-- Sheet Header Detail -->
+        <header class="mb-8">
+          <div class="font-mono text-xs uppercase tracking-widest text-[var(--ink3)] mb-3">
+            {translate('sheet.detail')} {sheetNum} / {translate('titleBlock.sheet')} {sheetNum} {translate('sheet.of')} 08
+          </div>
+
+          <h1 class="text-[clamp(2rem,4vw,3.15rem)] font-semibold tracking-[-0.025em] leading-[1.0] text-[var(--ink)] mb-4 [text-wrap:balance]">
+            {entry.data.title}
+          </h1>
+
+          <p class="text-lg leading-relaxed text-[var(--ink2)] max-w-[68ch]" data-article-intro={entry.data.intro}>
+            {entry.data.intro}
+          </p>
+        </header>
+
+        <aside class="article-mistakes" data-mistakes aria-labelledby="mistakes-label">
+          <p class="article-mistakes__label" id="mistakes-label">
+            <span class="redline-square" aria-hidden="true"></span>
+            {translate('article.mistakes')}
+          </p>
+          <ul class="article-mistakes__list">
+            {entry.data.mistakes.map((mistake) => (
+              <li class="article-mistakes__item">
+                {splitMistake(mistake).map((part) =>
+                  part.code ? <code>{part.text}</code> : part.text
+                )}
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <div class="h-px bg-[var(--rule)] mb-10" aria-hidden="true"></div>
+
+        <!-- Sheet Body -->
+        <div class="sheet-body">
+          <Content components={{ Example }} />
+        </div>
+
+        <!-- Prev / Next Navigation -->
+        <nav aria-label={translate('nav.pagination')} class="flex items-center justify-between py-6 mt-16 border-t border-b border-[var(--rule)] font-mono text-sm">
+          <div>
+            {prevEntry ? (
+              <a
+                href={article(lang, prevEntry.slug)}
+                class="inline-flex items-center gap-2 text-[var(--ink)] hover:text-[var(--blue)] transition-colors"
+              >
+                <span aria-hidden="true">&larr;</span>
+                <span>{translate('titleBlock.sheet')} 0{prevEntry.order}</span>
+              </a>
+            ) : (
+              <span class="text-[var(--ink3)] opacity-40">&larr; {translate('sheet.prev')}</span>
+            )}
+          </div>
+
+          <div>
+            {nextEntry ? (
+              <a
+                href={article(lang, nextEntry.slug)}
+                class="inline-flex items-center gap-2 text-[var(--ink)] hover:text-[var(--blue)] transition-colors"
+              >
+                <span>{translate('titleBlock.sheet')} 0{nextEntry.order}</span>
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            ) : (
+              <span class="text-[var(--ink3)] opacity-40">{translate('sheet.next')} &rarr;</span>
+            )}
+          </div>
+        </nav>
+      </article>
+    </div>
+  </div>
+
+  <!-- Tape Flag recording script -->
+  <script is:inline define:vars={{ slug, title: entry.data.title, order, lang }}>
+    try {
+      localStorage.setItem('dmg:last', JSON.stringify({ slug: slug, title: title, order: order, lang: lang }));
+    } catch(e) {}
+  </script>
+</Sheet>

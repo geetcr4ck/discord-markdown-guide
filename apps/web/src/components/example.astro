@@ -1,0 +1,117 @@
+---
+import { toHTML } from '../markdown';
+import { t } from '../i18n/ui';
+import type { Lang } from '../i18n/routes';
+
+export interface Props {
+  source: string;
+  caption?: string;
+  discord?: Record<string, string>;
+  figure?: string;
+}
+
+const { source, caption, discord, figure } = Astro.props;
+const currentLang = (Astro.currentLocale as Lang) || 'en';
+const translate = t(currentLang);
+
+const discordCallback = discord
+  ? Object.keys(discord).reduce((acc: Record<string, any>, key: string) => {
+      acc[key] = () => discord[key];
+      return acc;
+    }, {})
+  : {};
+
+const parsedHTML = toHTML(source, { discordCallback, locale: currentLang });
+const isMultiLine = source.includes('\n');
+const copyLabel = caption ?? translate('cheat.youType');
+---
+
+<figure class="detail my-8 not-prose" data-copy-scope>
+  {figure && (
+    <div class="font-mono text-[0.6875rem] uppercase tracking-wider text-[var(--ink3)] mb-2">
+      {figure}
+    </div>
+  )}
+
+  {isMultiLine ? (
+    <div class="flex flex-col gap-3">
+      {/* Framed source block on paper */}
+      <div class="border border-[var(--ink)] bg-[var(--paper2)] p-4 relative">
+        <div class="mb-2 flex items-center justify-between gap-3">
+          <div class="text-[0.625rem] font-mono uppercase tracking-widest text-[var(--ink3)]">
+            {translate('play.source')}
+          </div>
+          <button
+            class="copy-button"
+            type="button"
+            data-copy
+            data-copy-label={copyLabel}
+            aria-label={`${translate('cheat.copy')}: ${copyLabel}`}
+          >
+            <span data-copy-label-visual aria-hidden="true">
+              {translate('cheat.copy')}
+            </span>
+          </button>
+        </div>
+        <pre class="font-mono text-sm leading-relaxed overflow-x-auto m-0 p-0 text-[var(--ink)]"><code data-copy-target>{source}</code></pre>
+      </div>
+
+      {/* Horizontal dimension line, decorative only */}
+      <div class="flex items-center justify-center gap-2 text-[var(--ink3)] font-mono text-[0.625rem] py-0.5 select-none" aria-hidden="true">
+        <span class="h-px bg-[var(--rule)] flex-1"></span>
+        <span class="px-2 py-0.5 border border-[var(--rule)] bg-[var(--paper)] text-[0.75rem]">&#8596;</span>
+        <span class="h-px bg-[var(--rule)] flex-1"></span>
+      </div>
+
+      {/* Specimen pane */}
+      <div class="specimen-pane p-4 relative">
+        <div class="text-[0.625rem] font-mono uppercase tracking-widest text-[var(--specimen-muted)] mb-1">
+          {translate('play.specimen')}
+        </div>
+        <div class="leading-normal" set:html={parsedHTML} />
+      </div>
+    </div>
+  ) : (
+    <div class="grid grid-cols-1 min-[720px]:grid-cols-[1fr,auto,1fr] items-stretch gap-3 min-[720px]:gap-4">
+      {/* Framed source block on paper */}
+      <div class="border border-[var(--ink)] bg-[var(--paper2)] p-4 flex flex-col justify-center">
+        <div class="mb-2 flex items-center justify-between gap-3">
+          <div class="text-[0.625rem] font-mono uppercase tracking-widest text-[var(--ink3)]">
+            {translate('play.source')}
+          </div>
+          <button
+            class="copy-button"
+            type="button"
+            data-copy
+            data-copy-label={copyLabel}
+            aria-label={`${translate('cheat.copy')}: ${copyLabel}`}
+          >
+            <span data-copy-label-visual aria-hidden="true">
+              {translate('cheat.copy')}
+            </span>
+          </button>
+        </div>
+        <pre class="font-mono text-sm leading-relaxed overflow-x-auto m-0 p-0 text-[var(--ink)]"><code data-copy-target>{source}</code></pre>
+      </div>
+
+      {/* Dimension line, hidden below 720px */}
+      <div class="hidden min-[720px]:flex items-center justify-center text-[var(--ink3)] font-mono text-[0.625rem] select-none px-1" aria-hidden="true">
+        <span class="px-1.5 py-0.5 border border-[var(--rule)] bg-[var(--paper)] text-[0.75rem] whitespace-nowrap">&#8596;</span>
+      </div>
+
+      {/* Specimen pane */}
+      <div class="specimen-pane p-4 flex flex-col justify-center">
+        <div class="text-[0.625rem] font-mono uppercase tracking-widest text-[var(--specimen-muted)] mb-1">
+          {translate('play.specimen')}
+        </div>
+        <div class="leading-normal" set:html={parsedHTML} />
+      </div>
+    </div>
+  )}
+
+  {caption && (
+    <figcaption class="mt-2.5 text-[13px] text-[var(--ink3)] max-w-[60ch] leading-relaxed">
+      {caption}
+    </figcaption>
+  )}
+</figure>

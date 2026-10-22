@@ -1,0 +1,58 @@
+---
+title: "Blok kode"
+description: "Inline code dan blok berpagar yang menjaga setiap karakter tetap apa adanya."
+intro: "Tampilkan kode persis seperti yang kamu ketik, inline di dalam kalimat atau di blok berpagar yang menjaga setiap pergantian baris."
+mistakes:
+  - "Pagar yang tidak ditutup membuat sisa pesan jadi kode; tambahkan pagar penutup."
+  - "Pakai dua backtick untuk inline code yang berisi backtick."
+  - "Kalau kodenya berisi tiga backtick, buka dan tutup pagarnya dengan empat."
+order: 4
+sample: "`inline code`"
+---
+
+import Example from '../../../components/example.astro'
+
+Backtick mematikan semua aturan lain. Apa pun yang ada di antara backtick sampai ke pembaca persis seperti yang kamu tulis, termasuk spasinya. Pakai inline code untuk satu kata di dalam kalimat, dan blok berpagar untuk apa pun yang punya pergantian baris.
+
+## Inline code
+
+Pakai satu backtick di tiap sisi untuk perintah, variabel, atau ekspresi pendek di dalam kalimat. Backtick-nya hilang, dan teksnya tetap ditampilkan dengan font monospace.
+
+<Example
+  source="`npm run dev`"
+  caption="Satu backtick di tiap sisi membuat perintahnya tetap literal di dalam kalimat."
+/>
+
+Inline code tetap satu baris. Kalau kodenya sendiri mengandung backtick, bungkus bagian itu dengan dua backtick supaya backtick di dalamnya tetap literal.
+
+## Blok berpagar
+
+Taruh tiga backtick di barisnya sendiri, lalu kodenya, lalu tiga backtick lagi di barisnya sendiri. Baris pagarnya hilang, dan baris di antaranya tetap mempertahankan pergantian baris dan indentasinya.
+
+<Example
+  source={"```\nconst total = price * quantity\nconsole.log(total)\n```"}
+  caption="Dua baris pagar itu cuma struktural; keduanya tidak sampai ke pembaca."
+/>
+
+Semua isinya literal. Penanda tebal, token mention, dan garis spoiler tetap tampil sebagai karakter. Kamu bisa menaruh blok berpagar di atas atau di bawah teks biasa dalam pesan yang sama; pagarnya hanya mengatur baris di antara penandanya. Baris kosong di dalam blok adalah bagian dari kodenya, bukan akhirnya.
+
+## Tag bahasa
+
+Taruh id bahasa tepat setelah pagar pembuka, di baris yang sama. Id itu memilih highlighter dan bukan bagian dari kodenya. Pakai huruf kecil; itu bentuk yang diharapkan highlighter. Halaman penyorotan sintaks mencantumkan id yang dipakai panduan ini.
+
+<Example
+  source={"```bash\npnpm install\npnpm dev\n```"}
+  caption="Id setelah pagar memilih highlighter-nya; id itu bukan bagian dari kodenya."
+/>
+
+Tanpa id, bloknya tetap tampil; hanya saja tanpa warna. Id yang tidak dikenali highlighter juga membuat bloknya tetap polos.
+
+## Backtick di dalam pagar
+
+Pagar tertutup pada tiga backtick berurutan yang pertama. Kalau kodenya sendiri mengandung rangkaian itu, buka dan tutup dengan empat backtick. Backtick tambahannya struktural dan tidak muncul di kodenya. Pakai jumlah yang sama di kedua ujung agar bloknya tertutup di tempat yang kamu harapkan.
+
+Kalau klienmu menampilkan backtick tambahan itu sebagai bagian dari kode, tampilkan contohnya sebagai inline code saja.
+
+## Perhatikan
+
+Pagar yang tidak ditutup menelan sisa pesanmu. Setiap baris setelah pagar pembuka tetap di dalam blok sampai kamu menutupnya, dan baris kosong tidak mengakhirinya. Pagar penutup yang hilang membuat sisa pesanmu jadi kode. Kalau sebuah pesan terlihat tidak ada habisnya, tambahkan pagar penutup di bagian bawah.

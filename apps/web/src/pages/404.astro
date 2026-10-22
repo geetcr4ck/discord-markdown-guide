@@ -1,0 +1,52 @@
+---
+import Sheet from '../layouts/Sheet.astro';
+import { t } from '../i18n/ui';
+import { home } from '../i18n/routes';
+
+const translate = t('en');
+const translateId = t('id');
+---
+
+<Sheet
+  title={translate('notFound.title')}
+  description={translate('notFound.body')}
+  sheetNumber="--"
+  lang="en"
+>
+  <div class="max-w-sheet mx-auto px-5 md:px-10 pt-16 md:pt-24 pb-16">
+    <div class="max-w-[60ch]">
+      <div class="font-mono text-xs uppercase tracking-widest text-[var(--ink3)] mb-4">
+        SHEET —
+      </div>
+
+      <h1 class="text-[clamp(2rem,4vw,3.15rem)] font-semibold tracking-[-0.025em] leading-[1.0] text-[var(--ink)] mb-4 [text-wrap:balance]">
+        {translate('notFound.title')}
+      </h1>
+
+      <p class="text-lg leading-relaxed text-[var(--ink2)] mb-8">
+        {translate('notFound.body')}
+      </p>
+
+      <div>
+        <a
+          href={home('en')}
+          class="inline-flex items-center gap-2 font-mono text-sm md:text-base font-medium text-[var(--ink)] underline decoration-[var(--blue)] decoration-2 underline-offset-4 hover:text-[var(--blue)] transition-colors"
+        >
+          <span>&larr; {translate('notFound.cta')}</span>
+        </a>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-[var(--rule)]" lang="id">
+        <p class="text-lg leading-relaxed text-[var(--ink2)] mb-6">
+          {translateId('notFound.body')}
+        </p>
+        <a
+          href={home('id')}
+          class="inline-flex items-center gap-2 font-mono text-sm md:text-base font-medium text-[var(--ink)] underline decoration-[var(--blue)] decoration-2 underline-offset-4 hover:text-[var(--blue)] transition-colors"
+        >
+          <span>&larr; {translateId('notFound.cta')}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</Sheet>

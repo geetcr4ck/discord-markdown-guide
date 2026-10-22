@@ -1,0 +1,70 @@
+---
+title: "Menyusun teks"
+description: "Judul, subteks, dan daftar yang memberi struktur pada pesan panjang."
+intro: "Beri struktur pada pesan panjang dengan tiga ukuran judul, subteks, dan daftar berbutir atau bernomor."
+mistakes:
+  - "`#Judul` tanpa spasi tetap teks biasa; tambahkan spasinya."
+  - "Tanda pagar keempat bukan judul; Discord berhenti di tiga tingkat."
+  - "Butir anak butuh dua spasi sebelum penandanya agar masuk satu tingkat lebih dalam."
+order: 2
+sample: "# Heading"
+---
+
+import Example from '../../../components/example.astro'
+
+Pesan panjang butuh tingkatan. Discord menyediakan tiga ukuran judul, satu ukuran subteks, dan dua gaya daftar. Semuanya dimulai di awal baris dan berhenti di akhir baris atau bloknya.
+
+## Judul
+
+Satu tanda pagar menghasilkan judul terbesar, dua menghasilkan judul yang lebih kecil, dan tiga menghasilkan yang paling kecil. Taruh tanda pagarnya tepat di awal baris, lalu spasi sebelum teksnya. Perbedaan ukurannya tetap; kamu tidak bisa memilih ukuran font.
+
+<Example
+  source={"# Release notes\n## Fixed\n### Parser"}
+  caption="Tiga tingkat judul, masing-masing lebih kecil dari tingkat di atasnya."
+/>
+
+Discord berhenti di tiga tingkat. Tanda pagar keempat bukan judul, jadi baris itu tetap teks biasa. Spasi setelah tanda pagar adalah bagian dari sintaksnya; `#Heading` tidak menjadi judul. Semua yang ada setelah spasi menjadi judul, jadi mulai baris baru untuk teks isi.
+
+## Subteks
+
+Taruh `-#` dan spasi di awal baris untuk menjadikannya subteks. Discord menampilkan baris itu lebih kecil dan redup, cocok untuk catatan kaki, disclaimer, atau baris kedua yang tenang di bawah judul.
+
+Subteks hanya punya satu ukuran. Mengulang penandanya tidak membuatnya makin kecil; karakter tambahannya justru tampil sebagai teks. Aturannya sama seperti judul: harus di awal baris. Subteks juga tetap teks biasa yang bisa diseleksi dan disalin.
+
+<Example
+  source="-# Diperbarui 12 Oktober"
+  caption="Satu tanda hubung, satu tanda pagar, satu spasi. Penandanya hilang dan barisnya turun satu tingkat."
+/>
+
+## Daftar
+
+Daftar berbutir dimulai dengan `-` atau `*` dan spasi di setiap baris. Kedua penanda itu bisa saling menggantikan.
+
+<Example
+  source={"- **Write** the change\n- *Test* the change\n- ~~Ship~~ the draft"}
+  caption="Penekanan inline tetap berfungsi di dalam butir daftar tanpa merusak butirnya."
+/>
+
+Daftar bernomor dimulai dengan angka, titik, dan spasi di setiap baris. Angkanya bagian dari penanda, jadi `1.` adalah pilihan yang aman di setiap baris.
+
+<Example
+  source={"1. Open the channel\n2. Paste the command\n3. Check the output"}
+  caption="Angka dan titik di awal setiap baris membuat daftar berurutan."
+/>
+
+Satu butir daftar bisa berupa satu kata atau kalimat penuh. Kamu bisa memakai tebal, miring, atau coretan di dalam butir; penandanya tetap di awal baris.
+
+## Daftar bersarang
+
+Beri indentasi dua spasi sebelum penanda di baris anak. Setiap indentasi memindahkan butir satu tingkat lebih dalam, dan aturannya sama untuk butir maupun angka.
+
+<Example
+  source={"- Parent\n  - Child\n    - Grandchild"}
+  caption="Setiap penanda yang diindentasi berada satu tingkat lebih dalam dari baris di atasnya."
+/>
+
+Jaga indentasinya tetap kecil. Dua spasi cukup untuk Discord. Daftar bersarang bisa berada di bawah butir mana pun, bukan hanya yang pertama, dan kamu kembali ke margin kiri saat daftar anaknya berakhir.
+
+## Perhatikan
+
+Tanda pagar hanya berfungsi di awal baris. `Release #1` tetap teks biasa karena tanda pagarnya ada di tengah kalimat, dan `#Release` tetap teks biasa karena spasinya tidak ada. Aturan awal baris yang sama berlaku untuk `-#`, `-`, dan `1.`. Kalau judul muncul sebagai tanda pagar literal, periksa dulu karakter pertama baris itu.

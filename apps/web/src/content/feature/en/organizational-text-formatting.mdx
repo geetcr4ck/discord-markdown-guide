@@ -1,0 +1,70 @@
+---
+title: "Organizing text"
+description: "Headings, subtext and lists that give a long message structure."
+intro: "Give a long message structure with three heading sizes, subtext, and bulleted or numbered lists."
+mistakes:
+  - "`#Heading` with no space stays plain text; add the space."
+  - "A fourth `#` is not a heading; Discord stops at three levels."
+  - "A child item needs two spaces before its marker to nest one level deeper."
+order: 2
+sample: "# Heading"
+---
+
+import Example from '../../../components/example.astro'
+
+A long message needs levels. Discord gives you three heading sizes, one size of subtext, and two list styles. Each one starts at the beginning of a line, and each one stops at the end of its line or block.
+
+## Headings
+
+One hash makes the largest heading, two make a smaller one, and three make the smallest. Put the hash at the very start of the line and a space before the text. The size difference is fixed; you cannot choose a font size.
+
+<Example
+  source={"# Release notes\n## Fixed\n### Parser"}
+  caption="Three heading levels, each smaller than the one above."
+/>
+
+Discord stops at three levels. A fourth hash is not a heading, so the line stays as text. The space after the hashes is part of the syntax; `#Heading` does not become a heading. Everything after the space becomes the heading, so start a new line for body text.
+
+## Subtext
+
+Put `-#` and a space at the start of a line to set it as subtext. Discord renders the line smaller and muted, which suits a footnote, a disclaimer, or a quiet second line under a heading.
+
+Subtext has one size. Repeating the marker does not shrink it further; the extra characters appear as text. It follows the same start-of-line rule as a heading, and it stays ordinary text that can be selected and copied.
+
+<Example
+  source="-# Updated 12 October"
+  caption="One dash, one hash, one space. The marker disappears and the line steps down."
+/>
+
+## Lists
+
+A bulleted list starts each line with `-` or `*` and a space. The two markers are interchangeable.
+
+<Example
+  source={"- **Write** the change\n- *Test* the change\n- ~~Ship~~ the draft"}
+  caption="Inline emphasis works inside a list item without breaking the bullet."
+/>
+
+A numbered list starts each line with a number, a period, and a space. The number is part of the marker, so `1.` is the safe choice on every line.
+
+<Example
+  source={"1. Open the channel\n2. Paste the command\n3. Check the output"}
+  caption="A number and a period at the start of each line make an ordered list."
+/>
+
+A list item can be a single word or a full sentence. You can put bold, italic, or strikethrough inside an item; the marker stays at the start of the line.
+
+## Nesting
+
+Indent a child line by two spaces before its marker. Each indent moves the item one level deeper, and the same rule works for bullets and numbers.
+
+<Example
+  source={"- Parent\n  - Child\n    - Grandchild"}
+  caption="Each indented marker sits one level deeper than the line above it."
+/>
+
+Keep the indent small. Two spaces are enough for Discord. A nested list can sit under any item, not only the first one, and you return to the left margin when the child list ends.
+
+## Watch out
+
+A hash only works at the start of a line. `Release #1` stays plain text because the hash sits mid-sentence, and `#Release` stays plain text because the space is missing. The same start-of-line rule applies to `-#`, `-`, and `1.`. If a heading appears as literal hashes, check the first character of the line before anything else.

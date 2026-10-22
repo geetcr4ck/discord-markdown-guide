@@ -1,0 +1,69 @@
+---
+title: "Sebutan"
+description: "Ping pengguna, role, channel, atau emoji khusus lewat id-nya."
+intro: "Panggil orang, role, atau channel, atau tampilkan emoji khusus, dengan token yang dibangun dari id-nya."
+mistakes:
+  - "`<@nama>` tetap teks biasa; tempel id numeriknya."
+  - "`<@123>` tanpa `&` adalah pengguna, bukan role; tulis `<@&123>`."
+  - "Token yang muncul sebagai kurung mentah biasanya berisi nama atau id tebakan; salin id lewat Developer Mode."
+order: 7
+sample: "@everyone"
+---
+
+import Example from '../../../components/example.astro'
+
+Mention adalah id di dalam tanda kurung sudut. Discord menukar id itu dengan nama dan membuat hasilnya jadi tautan. Pakai mention kalau orang atau channel-nya perlu notifikasi atau lompatan; pakai teks biasa kalau kamu hanya ingin menampilkan namanya.
+
+## Pengguna
+
+Taruh `@` dan id numerik pengguna di antara tanda kurung sudut. Pakai id-nya, bukan username.
+
+<Example
+  source="<@378293909610037252>"
+  discord={{ user: '@geetcr4ck' }}
+  caption="Id numeriknya jadi chip mention berisi nama pengguna."
+/>
+
+Mention pengguna memberi notifikasi ke orangnya, tergantung pengaturan notifikasinya, dan id-nya tetap valid meski username berubah. Mention pengguna bisa berada di tengah kalimat seperti kata lain. Chip yang tampil memakai nama yang dikenali pembaca, dan itu bisa berbeda di tiap server.
+
+## Role dan channel
+
+Role memakai `@&`, bukan `@`. Ampersand itulah yang membedakan role dari pengguna, jadi jangan dihilangkan. Mention role memberi notifikasi ke anggota yang punya role itu, asal role-nya mengizinkan mention.
+
+<Example
+  source="<@&378293909610037252>"
+  discord={{ role: '@Moderator' }}
+  caption="Id role-nya jadi mention role, dengan ampersand yang tidak terlihat."
+/>
+
+Channel memakai `#` dan id channel-nya. Mention channel membuat tautan yang melompat ke channel itu; tidak ada notifikasi yang dikirim.
+
+<Example
+  source="<#378293909610037252>"
+  discord={{ channel: '#general' }}
+  caption="Id channel-nya jadi tautan channel yang bisa diklik."
+/>
+
+## Emoji khusus
+
+Emoji khusus memakai titik dua, namanya, titik dua lagi, lalu id-nya. Namanya cuma label; id-nya yang memilih gambarnya. Emoji tampil seukuran teks di dalam pesan.
+
+<Example
+  source="<:duck:1263836954789806154>"
+  discord={{ emoji: '🦆' }}
+  caption="Emojinya tampil dari id-nya; namanya hanya label."
+/>
+
+Emoji khusus milik server yang memiliki emoji itu. Pembaca yang tidak bisa memakai emoji tersebut mungkin melihat namanya, bukan gambarnya, walaupun token-nya valid.
+
+## @everyone dan @here
+
+`@everyone` dan `@here` adalah teks biasa, tanpa kurung atau id. `@everyone` menjangkau semua orang yang bisa melihat channel itu; `@here` menjangkau anggota yang sedang online. Keduanya berisik, jadi pakai untuk pengumuman, bukan balasan sehari-hari. Kamu butuh izin untuk mention semua orang di sebuah server.
+
+## Mencari id
+
+Nyalakan Developer Mode di User Settings, lalu Advanced. Klik kanan pengguna, role, atau channel dan pilih Copy ID. Di ponsel, tahan item-nya (long-press), bukan klik kanan. Id-nya angka panjang; tempel di antara tanda kurung persis seperti yang kamu salin.
+
+## Perhatikan
+
+`<@name>` bukan mention. Tokennya menerima id numerik, jadi username di antara tanda kurung tetap teks biasa. Hal yang sama berlaku untuk `<@&name>` dan `<#name>`: role dan channel juga butuh id-nya. Kalau mention muncul sebagai tanda kurung mentah, periksa apakah ada nama di tempat yang seharusnya berisi angka.

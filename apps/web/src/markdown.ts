@@ -3,8 +3,9 @@
 import markdown from "simple-markdown";
 import highlight from "highlight.js/lib/common";
 
-// https://github.com/ItzDerock/discord-markdown-parser
-// https://github.com/brussell98/discord-markdown
+// Parser lineage: this file is derived from brussell98/discord-markdown (MIT)
+// and ItzDerock/discord-markdown-parser (Apache-2.0), and has been modified for
+// this project. See /NOTICE for the required notices and upstream links.
 
 function htmlTag(tagName, content, attributes, isClosed = true, state = {}) {
   if (typeof isClosed === "object") {
@@ -195,7 +196,9 @@ const bodyRules = {
     },
   }),
   codeBlock: Object.assign({}, markdown.defaultRules.codeBlock, {
-    match: markdown.inlineRegex(/^```(([a-z0-9-]+?)\n+)?\n*([^]+?)\n*```/i),
+    match: markdown.inlineRegex(
+      /^(`{3,})(?:([a-z0-9-]+?)\n+)?\n*([^]+?)\n*\1(?!`)/i
+    ),
     parse: function (capture, parse, state) {
       return {
         lang: (capture[2] || "").trim(),
@@ -247,6 +250,7 @@ const bodyRules = {
         href: markdown.sanitizeUrl(node.target),
         title: node.title,
         target: "_blank",
+        rel: "noopener noreferrer",
       };
 
       return htmlTag("a", output(node.content, state), attributes, state);
@@ -268,7 +272,11 @@ const bodyRules = {
       return htmlTag(
         "a",
         output(node.content, state),
-        { href: markdown.sanitizeUrl(node.target), target: "_blank" },
+        {
+          href: markdown.sanitizeUrl(node.target),
+          target: "_blank",
+          rel: "noopener noreferrer",
+        },
         state
       );
     },
@@ -289,7 +297,11 @@ const bodyRules = {
       return htmlTag(
         "a",
         output(node.content, state),
-        { href: markdown.sanitizeUrl(node.target), target: "_blank" },
+        {
+          href: markdown.sanitizeUrl(node.target),
+          target: "_blank",
+          rel: "noopener noreferrer",
+        },
         state
       );
     },
@@ -305,7 +317,38 @@ const bodyRules = {
       }
       return null;
     },
+    // Rendered inside a specimen, never as part of the page outline.
+    html: function (node, output, state) {
+      return htmlTag("div", output(node.content, state), {
+        class: "discord-h" + node.level,
+      });
+    },
   }),
+  subtext: {
+    order: markdown.defaultRules.heading.order,
+    match: function (source, state) {
+      if (
+        state.prevCapture === null ||
+        state.prevCapture[state.prevCapture.length - 1] === "\n"
+      ) {
+        return /^-# +([^\n]+?)(\n|$)/.exec(source);
+      }
+      return null;
+    },
+    parse: function (capture, parse, state) {
+      return {
+        content: parse(capture[1], state),
+      };
+    },
+    html: function (node, output, state) {
+      return htmlTag(
+        "div",
+        output(node.content, state),
+        { class: "discord-subtext" },
+        state
+      );
+    },
+  },
   list: Object.assign({}, markdown.defaultRules.list, {
     match: function (source, state, prevCapture) {
       state._list = true;
@@ -498,6 +541,86 @@ const bodyRules = {
       );
     },
   },
+
+  discordTimestamp: {
+    order: markdown.defaultRules.strong.order,
+    match: (source) => /^<t:(\d{1,13})(?::([tTdDfFR]))?>/.exec(source),
+    parse: function (capture) {
+      return {
+        seconds: parseInt(capture[1], 10),
+        style: capture[2] || "f",
+        raw: capture[0],
+      };
+    },
+    html: function (node, output, state) {
+      const date = new Date(node.seconds * 1000);
+
+      if (!isFinite(date.getTime())) {
+        // 13 digits of seconds can exceed the Date range
+        return state.escapeHTML ? markdown.sanitizeText(node.raw) : node.raw;
+      }
+
+      const locale = state.locale === "id" ? "id-ID" : "en";
+      const style = /^[tTdDfFR]$/.test(node.style) ? node.style : "f";
+      let text;
+
+      if (style === "R") {
+        const delta = (date.getTime() - Date.now()) / 1000;
+        const units = [
+          ["year", 31536000],
+          ["month", 2592000],
+          ["day", 86400],
+          ["hour", 3600],
+          ["minute", 60],
+        ];
+        const relative = new Intl.RelativeTimeFormat(locale, {
+          numeric: "auto",
+        });
+        const unit = units.find((candidate) => Math.abs(delta) >= candidate[1]);
+        text = unit
+          ? relative.format(Math.round(delta / unit[1]), unit[0])
+          : relative.format(0, "second");
+      } else {
+        const dateTimeFormats = {
+          t: { hour: "2-digit", minute: "2-digit" },
+          T: { hour: "2-digit", minute: "2-digit", second: "2-digit" },
+          d: { day: "numeric", month: "numeric", year: "numeric" },
+          D: {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          },
+          f: {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          },
+          F: {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          },
+        };
+        text = new Intl.DateTimeFormat(
+          locale,
+          Object.assign({ timeZone: "UTC" }, dateTimeFormats[style])
+        ).format(date);
+      }
+
+      return htmlTag(
+        "time",
+        markdown.sanitizeText(text),
+        { class: "discord-timestamp", datetime: date.toISOString() },
+        state
+      );
+    },
+  },
 };
 
 const discordCallbackDefaults = {
@@ -522,6 +645,7 @@ const htmlOutputBody = markdown.outputFor(bodyRules, "html");
  * @param {String} source Source markdown content
  * @param {Object} [options] Options for the parser
  * @param {Boolean} [options.isTitle=false] Parse as embed content
+ * @param {String} [options.locale] Locale for timestamps ("id" for Indonesian)
  * @param {Object} [options.cssModuleNames] An object mapping css classes to css module classes
  */
 export function toHTML(source, options?: any) {
@@ -545,6 +669,7 @@ export function toHTML(source, options?: any) {
     inQuote: false,
     inEmphasis: false,
     escapeHTML: true,
+    locale: options.locale || null,
     cssModuleNames: options.cssModuleNames || null,
     discordCallback: Object.assign(
       {},

@@ -1,0 +1,69 @@
+---
+title: "Syntax highlighting"
+description: "Name the language after the opening fence to colour a code block."
+intro: "Colour a fenced code block by putting a language id directly after the opening fence."
+mistakes:
+  - "A space before the id makes it the first line of code; keep the id against the fence."
+  - "An unknown id costs colour, not the code; the block still renders."
+  - "The closing fence takes no id; a stray one can leave the block open."
+order: 5
+sample: "```js\nconst x = 1\n```"
+---
+
+import Example from '../../../components/example.astro'
+
+A language id gives a code block colour. It changes nothing about the characters; it only tells the highlighter how to read them. The code is already literal, so the id is safe to add or remove at any time.
+
+## The rule
+
+Put the id immediately after the opening fence, on the same line, with no space. Add a newline, then the code, then the closing fence. The id is a single word; do not put a colon or a second word after it. The closing fence stays bare. The newline after the id starts the first line of code; without it, the id and the first line run together.
+
+<Example
+  source={"```js\nconst total = price * quantity\n```"}
+  caption="The id follows the opening fence and disappears with it."
+/>
+
+The id is not shown in the result, and it does not change the text inside the block. It only selects the colour rules. A block with a single line of code still needs both fences.
+
+## Common ids
+
+Use the short id shown below. The table covers the languages most messages need; it is a starting point, not the full list. If your language is not here, the block still renders. Try the short id from the language's own documentation; an id the highlighter does not know costs you colour, not the code.
+
+| Id | Language |
+| --- | --- |
+| `js` | JavaScript |
+| `ts` | TypeScript |
+| `py` | Python |
+| `html` | HTML |
+| `css` | CSS |
+| `json` | JSON |
+| `bash` | Bash or shell |
+| `diff` | Diffs and patches |
+| `md` | Markdown |
+| `sql` | SQL |
+| `yaml` | YAML |
+| `rust` | Rust |
+| `go` | Go |
+| `java` | Java |
+| `csharp` | C# |
+| `php` | PHP |
+| `ruby` | Ruby |
+
+## No id, no colour
+
+A fence with no id renders as plain monospace. An id the highlighter does not know does the same; the block still renders, but the text stays one colour.
+
+<Example
+  source={"```\nconst total = price * quantity\n```"}
+  caption="Without an id the block still renders; it has no colour."
+/>
+
+Plain is the right choice for output that is not code: a log, an error message, or a stack trace. Colour can add noise when there is no syntax to read. A plain block is also the honest choice when the language is mixed or unknown.
+
+## Inside fences only
+
+An id has meaning only on an opening fence. After an inline backtick, the same letters are part of the code. A fenced block also has one language from start to finish; you cannot switch halfway through. The closing fence takes no id, and a stray id there can leave the block open.
+
+## Watch out
+
+A space between the fence and the id turns the id into the first line of the block. Keep the id against the fence: the language name belongs to the fence, not to the code. The same happens if you put the id on its own line.

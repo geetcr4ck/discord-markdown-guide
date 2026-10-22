@@ -1,0 +1,72 @@
+---
+title: "Text formatting"
+description: "Bold, italic, underline and strikethrough, with the exact markers Discord accepts."
+intro: "Make a few words stand out without changing the sentence around them. Every marker below works in a normal message."
+mistakes:
+  - "`*word` with no closing marker sends the asterisk."
+  - "`** word **` with spaces inside the markers does not render."
+  - "`__word__` is underline, not italic."
+order: 1
+sample: "**bold** *italic* ~~struck~~"
+---
+
+import Example from '../../../components/example.astro'
+
+Discord reads a small set of markers around a span of text. The markers disappear when you send the message; the span keeps the style. The opening and closing marker must match, and the text between them must not be empty. Every rule below works in a normal message.
+
+## Bold
+
+Wrap the span in two asterisks. The opening pair starts the bold run and the closing pair ends it. The same pair works inside a sentence, so you do not need a line of its own. You can bold a single word, a phrase, or a whole line.
+
+<Example
+  source="**bold**"
+  caption="Two asterisks on each side; neither pair reaches the reader."
+/>
+
+Use bold for a phrase or a whole line. A paragraph set entirely in bold is harder to read, so reserve it for the span that matters.
+
+## Italic
+
+Use one asterisk or one underscore on each side. The two markers are interchangeable: `*text*` and `_text_` produce the same italic span. Use the underscore form when the surrounding sentence already uses asterisks for bold, so the pairs are easier to count.
+
+<Example
+  source="*italic* and _also italic_"
+  caption="Either marker pair works. Pick one and keep it consistent."
+/>
+
+## Underline and strikethrough
+
+Two underscores underline. Two tildes strike through. The doubled marker matters: `_text_` is italic, while `__text__` is underline. Discord draws the line itself; the underscores and tildes never appear.
+
+<Example
+  source="__underlined__ and ~~struck through~~"
+  caption="Double underscores draw a line under; double tildes draw one through."
+/>
+
+Strikethrough suits a correction or a crossed-out plan. Underline is heavier, so it works best on a short span.
+
+## Combining markers
+
+Markers nest. Three asterisks make bold italic, and an underline can wrap a bold span. The outer pair sets the first style and the inner pair adds the second.
+
+<Example
+  source="__***bold, underlined and italic***__"
+  caption="The outer pair sets underline; the inner pairs set bold and italic."
+/>
+
+`***bold italic***`, `__**bold underline**__`, and `__*underline italic*__` combine two styles; `__***all three***__` stacks all three. Keep the pairs balanced and close them in the reverse order you opened them. `__**bold**__` is valid; `__**bold__**` is not.
+
+## Escaping
+
+A backslash before a marker prints the marker instead of applying it. Inline code does the same for everything inside it, which is easier when you need to show a whole run of markers. The backslash itself does not appear.
+
+<Example
+  source={`\\*not italic\\* and \`**not bold**\``}
+  caption="The backslash and the backticks both keep the markers visible."
+/>
+
+Escaping works on the markers covered here, so you can write a literal `**` or `~~` without opening a style. A backslash only affects the character immediately after it; it is not a switch that turns off formatting for the rest of the line.
+
+## Watch out
+
+`__text__` is underline, not bold. Use `**text**` when you want bold; double underscores will draw a line under the words instead. A single underscore is italic and a double underscore is underline, so the count changes the style, not the strength. Keep the markers against the text as well; a space immediately inside a pair is the other common reason a span stays plain.

@@ -1,0 +1,153 @@
+---
+import type { Lang } from '../../i18n/routes';
+import { locales } from '../../i18n/routes';
+import { t } from '../../i18n/ui';
+import Sheet from '../../layouts/Sheet.astro';
+import { Playground } from '../../components/react/playground';
+
+export async function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const { lang } = Astro.params as { lang: Lang };
+const translate = t(lang);
+
+const samplesByLang = {
+  en: [
+    {
+      label: translate('samples.formatting'),
+      value: `# Discord Markdown
+
+**Bold text**, *italics*, and __underlined__.
+~~Strikethrough~~ and ||spoiler text||.
+
+> Single-line blockquote
+>>> Multi-line blockquote
+spanning several lines.`,
+    },
+    {
+      label: translate('samples.mentions'),
+      value: `# Mentions & Tokens
+
+User: <@123456789>
+Channel: <#987654321>
+Role: <@&456789123>
+Everyone: @everyone
+Here: @here
+
+Navigation:
+<id:browse>
+<id:customize>
+<id:guide>`,
+    },
+    {
+      label: translate('samples.code'),
+      value: `# Code Blocks
+
+Inline \`const message = "Hello Discord";\` snippet.
+
+\`\`\`typescript
+interface Message {
+  author: string;
+  content: string;
+  timestamp: Date;
+}
+
+function post(msg: Message): void {
+  console.log(\`[\${msg.author}]: \${msg.content}\`);
+}
+\`\`\``,
+    },
+  ],
+  id: [
+    {
+      label: translate('samples.formatting'),
+      value: `# Markdown Discord
+
+**Teks tebal**, *miring*, dan __bergaris bawah__.
+~~Dicoret~~ dan ||teks spoiler||.
+
+> Kutipan satu baris
+>>> Kutipan beberapa baris
+yang mencakup beberapa baris teks.`,
+    },
+    {
+      label: translate('samples.mentions'),
+      value: `# Sebutan & Token
+
+Pengguna: <@123456789>
+Saluran: <#987654321>
+Peran: <@&456789123>
+Semua: @everyone
+Di sini: @here
+
+Navigasi:
+<id:browse>
+<id:customize>
+<id:guide>`,
+    },
+    {
+      label: translate('samples.code'),
+      value: `# Blok Kode
+
+Cuplikan sebaris \`const pesan = "Halo Discord";\`.
+
+\`\`\`typescript
+interface Pesan {
+  penulis: string;
+  isi: string;
+  waktu: Date;
+}
+
+function kirim(p: Pesan): void {
+  console.log(\`[\${p.penulis}]: \${p.isi}\`);
+}
+\`\`\``,
+    },
+  ],
+};
+
+const samples = samplesByLang[lang] || samplesByLang.en;
+const defaultValue = samples[0].value;
+---
+
+<Sheet
+  title={translate('play.title')}
+  description={translate('play.lede')}
+  sheetNumber="09"
+  lang={lang}
+>
+  <div class="max-w-sheet mx-auto px-5 md:px-10 pt-10 md:pt-16">
+    <header class="mb-8">
+      <div class="font-mono text-xs uppercase tracking-widest text-[var(--ink3)] mb-3">
+        {translate('play.kicker')}
+      </div>
+
+      <h1 class="text-[clamp(2rem,4vw,3.15rem)] font-semibold tracking-[-0.025em] leading-[1.0] text-[var(--ink)] mb-4 [text-wrap:balance]">
+        {translate('play.title')}
+      </h1>
+
+      <p class="text-lg leading-relaxed text-[var(--ink2)] max-w-[68ch]">
+        {translate('play.lede')}
+      </p>
+    </header>
+
+    <div class="h-px bg-[var(--rule)] mb-6" aria-hidden="true"></div>
+
+    <Playground
+      client:load
+      defaultValue={defaultValue}
+      samples={samples}
+      labels={{
+        source: translate('play.source'),
+        specimen: translate('play.specimen'),
+        copy: translate('play.copy'),
+        copied: translate('play.copied'),
+        reset: translate('play.reset'),
+        samples: translate('play.samples'),
+        note: translate('play.note'),
+      }}
+      lang={lang}
+    />
+  </div>
+</Sheet>

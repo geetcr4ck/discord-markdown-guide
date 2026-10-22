@@ -1,0 +1,62 @@
+---
+title: "Kutipan blok"
+description: "Kutip satu baris, sebuah log, atau seluruh percakapan."
+intro: "Pisahkan satu baris atau satu bagian penuh sebagai kutipan, dengan garis di sisi kiri dan teks yang diredupkan."
+mistakes:
+  - "Baris kosong tanpa `>` mengakhiri kutipan; pakai `>` sendirian untuk melanjutkannya."
+  - "`>>` bukan kutipan bersarang; Discord menampilkan penanda tambahannya sebagai teks."
+  - "Kutip blok kode dengan mengawali setiap baris, termasuk kedua pagarnya."
+order: 3
+sample: "> quoted line"
+---
+
+import Example from '../../../components/example.astro'
+
+Kutipan blok menempatkan teks di balik garis vertikal dan meredupkannya, sehingga bagian yang kamu kutip terlihat terpisah dari balasanmu. Pakai ini saat kamu menjawab baris tertentu, menempelkan log, atau mempertahankan kata-kata orang lain apa adanya. Discord menambahkan garisnya untukmu; penandanya tidak sampai ke pembaca.
+
+## Satu baris
+
+Mulai baris dengan `>` dan spasi, lalu teksnya. Penandanya harus jadi karakter pertama di baris itu. Kutipan berakhir di pergantian baris: baris berikutnya tanpa `>` adalah teks biasa, dan `>` tanpa spasi tetap tampil sebagai karakter biasa.
+
+<Example
+  source="> deploy is blocked until the migration finishes"
+  caption="Penanda dan spasinya hilang; garisnya tetap di kiri."
+/>
+
+## Beberapa baris
+
+Awali setiap baris dengan `>` dan spasi. Baris kutipan yang berurutan menyatu jadi satu blok, sehingga garisnya membentang di sepanjang kutipan itu.
+
+<Example
+  source={"> first line\n> second line\n> third line"}
+  caption="Setiap baris membawa penandanya sendiri; bersama-sama mereka membentuk satu kutipan."
+/>
+
+Satu `>>>` di awal baris mengutip semua yang ada setelahnya sampai akhir pesan. Cara ini lebih cepat untuk log panjang, tapi kutipannya baru berhenti saat pesannya berakhir. Penanda per baris memungkinkanmu berhenti tepat di tempat yang kamu mau.
+
+## Kutipan bersarang
+
+Discord tidak menumpuk tingkat kutipan. `>` kedua tidak menambah garis yang lebih dalam seperti di beberapa perangkat lunak forum, jadi `>>` bukan kutipan bersarang. Kalau kamu menempelkan kutipan dari platform yang memakai `>>`, siap-siap penanda tambahannya tampil sebagai teks biasa.
+
+Untuk rangkaian balasan, kutip setiap pesan sebagai blok tersendiri dan pisahkan bloknya dengan baris kosong. Hasilnya sederet kutipan di tingkat yang sama, lebih enak dibaca daripada tumpukan garis.
+
+## Mengutip blok kode
+
+Awali pagar pembuka, setiap baris kode, dan pagar penutup dengan `>` dan spasi. Blok kode lalu berada di dalam kutipan dan tetap memakai tata letak monospace-nya.
+
+<Example
+  source={"> ```js\n> const total = price * quantity\n> ```"}
+  caption="Pagar dan kodenya sama-sama membawa penanda, jadi bloknya tetap di dalam kutipan."
+/>
+
+Baris kosong di dalam kode juga perlu penandanya. Tanpanya, kutipan berakhir dan sisa kodenya jatuh di luar.
+
+## Paragraf
+
+Baris yang hanya berisi `>` adalah baris kutipan kosong. Pakai itu di antara dua paragraf agar keduanya tetap dalam satu kutipan; garisnya berlanjut di sisi kiri dan jedanya tetap bagian dari blok. Baris `> ` berikutnya memulai paragraf kedua.
+
+Beginilah cara mengutip bagian panjang tanpa membuat setiap baris jadi kutipan terpisah. Penanda kosong itulah pembeda antara jeda dan akhir.
+
+## Perhatikan
+
+Baris kosong tanpa `>` mengakhiri kutipan. Kalau kamu ingin kutipannya berlanjut setelah jeda, taruh `>` sendirian di baris kosong itu, jangan dibiarkan benar-benar kosong. Tanpa penanda itu, baris berikutnya dimulai di luar kutipan, meskipun nanti kamu menambahkan `>` lagi; baris itu memulai blok baru.

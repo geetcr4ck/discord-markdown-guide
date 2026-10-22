@@ -1,0 +1,54 @@
+---
+title: "Spoiler tags"
+description: "Hide text, or a whole block, behind a click."
+intro: "Hide a word, a phrase, or a whole block behind a cover that opens on click."
+mistakes:
+  - "`|| text ||` with spaces inside the bars can stay visible; keep the bars tight."
+  - "A single bar is not a spoiler; the marker is always a pair."
+  - "A spoiler is a visual cover, not privacy; keep passwords and tokens out."
+order: 6
+sample: "||hidden||"
+---
+
+import Example from '../../../components/example.astro'
+
+A spoiler covers its content until the reader clicks. The text is still in the message; the cover is a visual state, not a lock. Use it for a reveal, such as a plot point, a solution, or a gift, not for layout.
+
+## Inline
+
+Wrap the text in two bars on each side. The markers can sit in the middle of a sentence, so you can hide one word or one phrase. The cover works on a word, a phrase, or a whole line; the bars mark only the span you choose. Text outside the bars stays visible, and the bars themselves disappear when the message sends.
+
+<Example
+  source="The final boss is ||the gardener||."
+  caption="Only the text between the bars is covered."
+/>
+
+## A whole block
+
+The same pair of bars can wrap several lines. Put the opening bars before the first line and the closing bars after the last one; the cover then spans the whole passage.
+
+<Example
+  source={"||The surprise guest is\narriving at eight||"}
+  caption="Both lines sit under one cover because the bars wrap the whole block."
+/>
+
+A link can sit inside the bars like any other text. The reader sees the cover first, then the link after a click. The opening and closing bars can share a line with the text, or sit on their own lines around it.
+
+## With other formatting
+
+Bold, italic, and the other markers still work inside a spoiler. Discord parses the inner span first, then places the result under the cover. Put the bars outside the styling when you want the whole styled span covered.
+
+<Example
+  source="||**spoiler** with *style*||"
+  caption="The inner markers are parsed first; the cover hides the result."
+/>
+
+Inside inline code or a fenced block, the bars are ordinary characters. Code already switches off formatting, so no spoiler forms there.
+
+## Not a privacy tool
+
+A spoiler is a visual cover, not a security boundary. The text stays in the message, and anyone can click it, copy it, or read it with a client that ignores the cover. The cover is drawn by the client, so a modified client can skip it entirely. Assistive technology can still reach the text. Keep passwords, tokens, and personal data out of spoilers.
+
+## Watch out
+
+Keep the bars tight against the text. A space immediately inside `||` can stop the spoiler from forming in some clients, leaving the bars visible. Type `||text||`, not `|| text ||`. A single bar on either side is not enough; the marker is always a pair. Check the character too: a broken bar or a slash is not a pipe. If you need to show the bars as text, put them in inline code.

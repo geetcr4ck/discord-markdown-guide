@@ -1,0 +1,69 @@
+---
+title: "Penyorotan sintaks"
+description: "Sebutkan bahasanya setelah pagar pembuka untuk mewarnai blok kode."
+intro: "Beri warna blok kode berpagar dengan menaruh id bahasa tepat setelah pagar pembuka."
+mistakes:
+  - "Spasi sebelum id membuatnya jadi baris pertama kode; tempelkan id ke pagar."
+  - "Id yang tidak dikenali hanya menghilangkan warna, bukan kodenya; bloknya tetap tampil."
+  - "Pagar penutup tidak menerima id; id yang nyasar bisa membuat blok tetap terbuka."
+order: 5
+sample: "```js\nconst x = 1\n```"
+---
+
+import Example from '../../../components/example.astro'
+
+Id bahasa memberi warna pada blok kode. Id itu tidak mengubah karakternya sama sekali; hanya memberi tahu highlighter cara membacanya. Kodenya sudah literal, jadi id-nya aman ditambah atau dihapus kapan saja.
+
+## Aturannya
+
+Taruh id tepat setelah pagar pembuka, di baris yang sama, tanpa spasi. Tambahkan baris baru, lalu kodenya, lalu pagar penutup. Id-nya satu kata; jangan taruh titik dua atau kata kedua setelahnya. Pagar penutupnya biarkan polos. Baris baru setelah id memulai baris kode pertama; tanpanya, id dan baris pertama menyatu.
+
+<Example
+  source={"```js\nconst total = price * quantity\n```"}
+  caption="Id mengikuti pagar pembuka dan hilang bersamanya."
+/>
+
+Id tidak ditampilkan di hasilnya, dan tidak mengubah teks di dalam blok. Id hanya memilih aturan warnanya. Blok dengan satu baris kode tetap butuh kedua pagar.
+
+## Id yang umum
+
+Pakai id pendek di bawah ini. Tabel ini mencakup bahasa yang paling sering dibutuhkan pesan; ini titik awal, bukan daftar lengkap. Kalau bahasamu tidak ada di sini, bloknya tetap tampil. Coba id pendek dari dokumentasi bahasa itu sendiri; id yang tidak dikenali highlighter cuma menghilangkan warnanya, bukan kodenya.
+
+| Id | Bahasa |
+| --- | --- |
+| `js` | JavaScript |
+| `ts` | TypeScript |
+| `py` | Python |
+| `html` | HTML |
+| `css` | CSS |
+| `json` | JSON |
+| `bash` | Bash atau shell |
+| `diff` | Diff dan patch |
+| `md` | Markdown |
+| `sql` | SQL |
+| `yaml` | YAML |
+| `rust` | Rust |
+| `go` | Go |
+| `java` | Java |
+| `csharp` | C# |
+| `php` | PHP |
+| `ruby` | Ruby |
+
+## Tanpa id, tanpa warna
+
+Pagar tanpa id tampil sebagai monospace polos. Id yang tidak dikenali highlighter juga begitu; bloknya tetap tampil, tapi teksnya tetap satu warna.
+
+<Example
+  source={"```\nconst total = price * quantity\n```"}
+  caption="Tanpa id, bloknya tetap tampil; hanya tanpa warna."
+/>
+
+Polos adalah pilihan yang tepat untuk keluaran yang bukan kode: log, pesan error, atau stack trace. Warna bisa menambah kebisingan saat tidak ada sintaks yang perlu dibaca. Blok polos juga pilihan yang jujur saat bahasanya campuran atau tidak diketahui.
+
+## Hanya di dalam pagar
+
+Id hanya berarti di pagar pembuka. Setelah backtick inline, huruf yang sama sudah jadi bagian dari kodenya. Blok berpagar juga hanya punya satu bahasa dari awal sampai akhir; kamu tidak bisa berganti di tengah jalan. Pagar penutup tidak menerima id, dan id yang nyasar di sana bisa membuat bloknya tidak tertutup.
+
+## Perhatikan
+
+Spasi antara pagar dan id membuat id-nya jadi baris pertama blok. Tempelkan id ke pagarnya: nama bahasa itu milik pagar, bukan milik kodenya. Hal yang sama terjadi kalau kamu menaruh id di barisnya sendiri.

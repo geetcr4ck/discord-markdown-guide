@@ -1,0 +1,72 @@
+---
+title: "Format teks"
+description: "Tebal, miring, garis bawah, dan coretan, dengan penanda persis yang diterima Discord."
+intro: "Buat beberapa kata menonjol tanpa mengubah kalimat di sekitarnya. Semua penanda di bawah berlaku di pesan biasa."
+mistakes:
+  - "`*word` tanpa penanda penutup membuat tanda bintangnya ikut terkirim."
+  - "`** word **` dengan spasi di dalam penanda tidak dirender."
+  - "`__word__` adalah garis bawah, bukan miring."
+order: 1
+sample: "**bold** *italic* ~~struck~~"
+---
+
+import Example from '../../../components/example.astro'
+
+Discord membaca sejumlah kecil penanda di sekitar potongan teks. Penanda itu hilang saat pesan terkirim, tapi teksnya tetap bergaya. Penanda pembuka dan penutup harus sama, dan teks di antara keduanya tidak boleh kosong. Semua aturan di bawah ini berlaku di pesan biasa.
+
+## Tebal
+
+Bungkus teksnya dengan dua tanda bintang. Pasangan pembuka memulai bagian tebal, pasangan penutup mengakhirinya. Pasangan yang sama bisa dipakai di tengah kalimat, jadi tidak perlu ditaruh di baris terpisah. Kamu bisa menebalkan satu kata, satu frasa, atau satu baris penuh.
+
+<Example
+  source="**bold**"
+  caption="Dua tanda bintang di tiap sisi; kedua pasangannya tidak sampai ke pembaca."
+/>
+
+Pakai tebal untuk satu frasa atau satu baris penuh. Paragraf yang seluruhnya tebal lebih sulit dibaca, jadi simpan untuk bagian yang benar-benar penting.
+
+## Miring
+
+Pakai satu tanda bintang atau satu garis bawah di tiap sisi. Kedua penanda itu bisa saling menggantikan: `*text*` dan `_text_` menghasilkan miring yang sama. Pakai bentuk garis bawah kalau kalimat di sekitarnya sudah memakai tanda bintang untuk tebal, supaya pasangannya lebih mudah dihitung.
+
+<Example
+  source="*italic* and _also italic_"
+  caption="Pasangan penanda mana pun berfungsi. Pilih satu dan pakai dengan konsisten."
+/>
+
+## Garis bawah dan coretan
+
+Untuk garis bawah, tulis dua garis bawah di tiap sisi. Untuk coretan, tulis dua tilde. Jumlah penandanya penting: `_text_` miring, sedangkan `__text__` bergaris bawah. Garisnya digambar Discord sendiri; garis bawah dan tilde tidak pernah muncul.
+
+<Example
+  source="__underlined__ and ~~struck through~~"
+  caption="Dua garis bawah menarik garis di bawah teks; dua tilde menarik garis menembusnya."
+/>
+
+Coretan cocok untuk koreksi atau rencana yang dibatalkan. Garis bawah lebih berat, jadi paling pas untuk teks pendek.
+
+## Menggabungkan penanda
+
+Penanda bisa bersarang. Tiga tanda bintang menghasilkan tebal miring, dan garis bawah bisa membungkus teks tebal. Pasangan luar menetapkan gaya pertama, pasangan dalam menambahkan gaya kedua.
+
+<Example
+  source="__***bold, underlined and italic***__"
+  caption="Pasangan luar menetapkan garis bawah; pasangan dalam menetapkan tebal dan miring."
+/>
+
+`***bold italic***`, `__**bold underline**__`, dan `__*underline italic*__` menggabungkan dua gaya; `__***all three***__` menumpuk ketiganya. Jaga pasangannya tetap seimbang dan tutup dengan urutan kebalikan dari saat kamu membukanya. `__**bold**__` valid; `__**bold__**` tidak.
+
+## Escape
+
+Backslash (garis miring terbalik) di depan penanda membuat penanda itu tampil apa adanya, bukan diterapkan. Inline code melakukan hal yang sama untuk semua isinya, dan itu lebih mudah saat kamu perlu menampilkan sederet penanda. Backslash-nya sendiri tidak muncul.
+
+<Example
+  source={`\\*not italic\\* and \`**not bold**\``}
+  caption="Backslash dan backtick sama-sama membuat penandanya tetap terlihat."
+/>
+
+Escape berlaku untuk penanda yang dibahas di sini, jadi kamu bisa menulis `**` atau `~~` secara literal tanpa membuka gaya. Backslash hanya memengaruhi karakter tepat setelahnya; itu bukan sakelar yang mematikan format untuk sisa baris.
+
+## Perhatikan
+
+`__text__` itu garis bawah, bukan tebal. Pakai `**text**` kalau kamu ingin tebal; dua garis bawah akan menarik garis di bawah kata-katanya. Satu garis bawah berarti miring dan dua garis bawah berarti garis bawah, jadi jumlahnya mengubah gaya, bukan kekuatannya. Tempelkan juga penandanya ke teks; spasi tepat di dalam pasangan adalah penyebab umum lain kenapa sebuah bagian tetap polos.

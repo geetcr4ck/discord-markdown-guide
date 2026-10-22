@@ -1,0 +1,191 @@
+---
+import type { Lang } from '../i18n/routes';
+import { switchLocale } from '../i18n/routes';
+import { t } from '../i18n/ui';
+import { SITE_IMAGE, SITE_IMAGE_ID } from '../constants';
+import SheetHeader from '../components/sheet-header.astro';
+import TitleBlock from '../components/title-block.astro';
+import '../style.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  lang?: Lang;
+  sheetNumber: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  rail?: boolean;
+  tapeFlag?: boolean;
+}
+
+const {
+  title,
+  description,
+  lang,
+  sheetNumber,
+  canonicalPath,
+  ogImage,
+  tapeFlag = false,
+} = Astro.props;
+
+const currentLang: Lang = (lang || (Astro.currentLocale as Lang) || 'en');
+const translate = t(currentLang);
+const siteName = translate('site.name');
+
+const pageTitle = title ? `${title} — ${siteName}` : `${siteName} — ${translate('site.tagline')}`;
+const metaDescription = description || translate('site.description');
+
+const currentPath = Astro.url.pathname;
+const enPath = switchLocale(currentPath, 'en');
+const idPath = switchLocale(currentPath, 'id');
+
+const enUrl = new URL(enPath, Astro.site).toString().replace(/\/+$/, '') || '/';
+const idUrl = new URL(idPath, Astro.site).toString().replace(/\/+$/, '') || '/';
+const canonicalUrl = canonicalPath
+  ? new URL(canonicalPath, Astro.site).toString()
+  : new URL(currentPath, Astro.site).toString().replace(/\/+$/, '') || '/';
+
+const defaultOgImage = currentLang === 'id' ? SITE_IMAGE_ID : SITE_IMAGE;
+const fullOgImage = new URL(ogImage ?? defaultOgImage, Astro.site).toString();
+const ogLocale = currentLang === 'id' ? 'id_ID' : 'en_US';
+---
+
+<!doctype html>
+<html
+  lang={currentLang}
+  data-copy-copy={translate('cheat.copy')}
+  data-copy-copied={translate('cheat.copied')}
+  data-copy-manual={translate('cheat.copyManual')}
+  data-theme-to-dark={translate('theme.toDark')}
+  data-theme-to-light={translate('theme.toLight')}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#F2EFE7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1A1A1A" media="(prefers-color-scheme: dark)" />
+
+    <script is:inline>
+      (function () {
+        var stored = null;
+        try {
+          stored = window.localStorage.getItem("dmg:theme");
+        } catch (error) {
+          stored = null;
+        }
+
+        document.documentElement.classList.add("js");
+
+        var systemDark =
+          typeof window.matchMedia === "function" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme =
+          stored === "light" || stored === "dark"
+            ? stored
+            : systemDark
+              ? "dark"
+              : "light";
+
+        document.documentElement.dataset.theme = theme;
+
+        var color = theme === "dark" ? "#1A1A1A" : "#F2EFE7";
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        for (var index = 0; index < metas.length; index += 1) {
+          metas[index].setAttribute("content", color);
+        }
+      })();
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="title" content={pageTitle} />
+    <meta name="description" content={metaDescription} />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Hreflang alternates -->
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="id" href={idUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:image" content={fullOgImage} />
+    <meta property="og:locale" content={ogLocale} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalUrl} />
+    <meta property="twitter:title" content={pageTitle} />
+    <meta property="twitter:description" content={metaDescription} />
+    <meta property="twitter:image" content={fullOgImage} />
+  </head>
+  <body class="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col justify-between">
+    <a href="#main-content" class="skip-link">
+      {translate('a11y.skip')}
+    </a>
+
+    <div id="copy-status" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <div class="w-full">
+      <SheetHeader currentLocale={currentLang} />
+      <main id="main-content" class="w-full">
+        <slot />
+      </main>
+    </div>
+
+    <TitleBlock sheetNumber={sheetNumber} lang={currentLang} />
+
+    {tapeFlag && (
+      <script is:inline>
+        (function() {
+          try {
+            var raw = localStorage.getItem('dmg:last');
+            if (!raw) return;
+            var data = JSON.parse(raw);
+            var flagEl = document.getElementById('tape-flag');
+            var linkEl = document.getElementById('tape-flag-link');
+            var currentLang = document.documentElement.lang || 'en';
+            if (flagEl && linkEl && data && data.slug && data.title && data.lang === currentLang) {
+              linkEl.href = '/' + currentLang + '/' + data.slug;
+              linkEl.textContent = (data.order ? '0' + data.order + ' — ' : '') + data.title + ' →';
+              linkEl.removeAttribute('hidden');
+              flagEl.removeAttribute('hidden');
+              flagEl.classList.remove('hidden');
+            } else if (flagEl) {
+              flagEl.setAttribute('hidden', '');
+              flagEl.classList.add('hidden');
+              if (linkEl) linkEl.setAttribute('hidden', '');
+            }
+          } catch(e) {}
+        })();
+      </script>
+    )}
+
+    <script>
+      import { initCopy } from "../scripts/copy";
+      import { initSpoilers } from "../scripts/spoiler";
+      import { initTheme } from "../scripts/theme";
+
+      const labels = document.documentElement.dataset;
+
+      initCopy({
+        copy: labels.copyCopy ?? "",
+        copied: labels.copyCopied ?? "",
+        manual: labels.copyManual ?? "",
+      });
+      initTheme({
+        toDark: labels.themeToDark ?? "",
+        toLight: labels.themeToLight ?? "",
+      });
+      initSpoilers(document, { skipIslands: true });
+    </script>
+  </body>
+</html>
