@@ -1,0 +1,56 @@
+NOTICE
+======
+
+Discord Markdown Guide
+Copyright (c) 2026 geetcr4ck
+
+Third-party software
+--------------------
+
+The Discord Markdown parser in `apps/web/src/markdown.ts` is derived from the
+following open-source projects. That file has been modified for this project
+(adapted, extended, and converted for use in this site).
+
+1. brussell98/discord-markdown
+   https://github.com/brussell98/discord-markdown
+   Licensed under the MIT License.
+
+   MIT License
+
+   Copyright (c) 2017 Brussell
+
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is
+   furnished to do so, subject to the following conditions:
+
+   The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   SOFTWARE.
+
+2. ItzDerock/discord-markdown-parser
+   https://github.com/ItzDerock/discord-markdown-parser
+   Copyright Derock <derock@derock.dev>
+   Licensed under the Apache License, Version 2.0.
+   A copy of the license is included in LICENSES/Apache-2.0.txt and is also
+   available at https://www.apache.org/licenses/LICENSE-2.0
+
+   This project includes software developed by Derock
+   (https://github.com/ItzDerock/discord-markdown-parser) under the
+   Apache License, Version 2.0. The source file `apps/web/src/markdown.ts`
+   has been modified for this project.
+
+Original work
+-------------
+
+All site interface, copy, and design are original work by geetcr4ck and are
+licensed under the MIT License reproduced in LICENSE.
