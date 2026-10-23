@@ -1,3 +1,8 @@
+// SPDX-FileCopyrightText: 2017 Brussell
+// SPDX-FileCopyrightText: Derock <derock@derock.dev>
+// SPDX-FileCopyrightText: 2026 geetcr4ck
+// SPDX-License-Identifier: MIT AND Apache-2.0
+//
 // TODO: covert this to typescript
 // @ts-nocheck
 import markdown from "simple-markdown";
