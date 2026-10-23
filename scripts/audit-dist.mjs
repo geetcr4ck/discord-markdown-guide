@@ -100,6 +100,38 @@ const MISC_TITLES = {
   id: "Tautan, stempel waktu & perintah",
 };
 
+const DISCORD_EMBED = {
+  en: {
+    accent: 2052056,
+    eyebrow: "00 / Cheat sheet",
+    title: "Discord Markdown Guide",
+    tagline: "Every rule, with the result beside it.",
+    sample: "`**bold**` → **bold**  ·  `*italic*` → *italic*",
+    meta: "26 rules · 8 sheets · EN / ID",
+    open: "Open cheat sheet",
+    play: "Playground",
+    home: "https://discord-markdown-guide.pages.dev/en/",
+    playUrl: "https://discord-markdown-guide.pages.dev/en/play/",
+    logo: "https://discord-markdown-guide.pages.dev/logo-96.png",
+  },
+  id: {
+    accent: 2052056,
+    eyebrow: "00 / Contekan",
+    title: "Panduan Markdown Discord",
+    tagline: "Semua aturan, lengkap dengan hasilnya.",
+    sample: "`**tebal**` → **tebal**  ·  `*miring*` → *miring*",
+    meta: "26 aturan · 8 lembar · EN / ID",
+    open: "Buka contekan",
+    play: "Playground",
+    home: "https://discord-markdown-guide.pages.dev/id/",
+    playUrl: "https://discord-markdown-guide.pages.dev/id/play/",
+    logo: "https://discord-markdown-guide.pages.dev/logo-96.png",
+  },
+};
+
+const ALLOWED_COMPONENT_TYPES = new Set([1, 2, 9, 10, 11, 12, 14, 17]);
+const BUTTON_KEYS = new Set(["type", "url", "style", "label", "emoji", "disabled"]);
+
 const BRAND_SHORT = {
   en: "Discord Markdown",
   id: "Markdown Discord",
@@ -394,6 +426,42 @@ function metaContent(doc, key) {
       (candidate.attrs.name ?? "").toLowerCase() === lower
   );
   return tag ? tag.attrs.content ?? null : null;
+}
+
+function discordEmbedFor(rel) {
+  const raw = readPage(rel);
+  const match = raw.match(
+    /<script\b[^>]*\bid="discord:component-embed"[^>]*>([\s\S]*?)<\/script>/i
+  );
+  if (!match) return null;
+  const opening = match[0].slice(0, match[0].indexOf(">") + 1);
+  const tag = makeTag("script", opening, match.index);
+  const body = match[1];
+  let payload;
+  try {
+    payload = JSON.parse(body);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`invalid component embed JSON: ${message}`);
+  }
+  return {
+    tag,
+    body,
+    payload,
+    bytes: Buffer.byteLength(body, "utf8"),
+  };
+}
+
+function collectComponentNodes(node, result = []) {
+  if (!node || typeof node !== "object") return result;
+  if (Array.isArray(node)) {
+    for (const child of node) collectComponentNodes(child, result);
+    return result;
+  }
+  if (typeof node.type === "number") result.push(node);
+  if (Array.isArray(node.components)) collectComponentNodes(node.components, result);
+  if (node.accessory) collectComponentNodes(node.accessory, result);
+  return result;
 }
 
 function collectIds(doc) {
@@ -1169,6 +1237,104 @@ function checkHome(lang) {
     );
   });
 
+  check(`home ${label}: Discord component embed is valid and localized`, () => {
+    const embed = discordEmbedFor(rel);
+    const expected = DISCORD_EMBED[lang];
+    assert(embed, 'no <script id="discord:component-embed">');
+    assert(
+      (embed.tag.attrs.type ?? "").toLowerCase() === "application/json",
+      `script type is "${embed.tag.attrs.type ?? "(missing)"}"`
+    );
+    assert(embed.bytes <= 3000, `payload is ${embed.bytes} bytes, expected <= 3000`);
+
+    const payload = embed.payload;
+    assert(
+      payload !== null && typeof payload === "object" && !Array.isArray(payload),
+      "payload is not a JSON object"
+    );
+    assert(
+      Object.keys(payload).length === 1 && Object.prototype.hasOwnProperty.call(payload, "component"),
+      `root keys are ${Object.keys(payload).join(", ") || "none"}`
+    );
+
+    const root = payload.component;
+    assert(root !== null && typeof root === "object" && !Array.isArray(root), "component is missing");
+    assert(root.type === 17, `root type is ${root.type ?? "(missing)"}, expected 17`);
+    assert(
+      root.accent_color === expected.accent,
+      `accent_color is ${root.accent_color ?? "(missing)"}, expected ${expected.accent}`
+    );
+
+    const nodes = collectComponentNodes(root);
+    assert(nodes.length <= 40, `found ${nodes.length} components, max is 40`);
+    assert(nodes.filter((node) => node.type === 17).length === 1, "expected one Container");
+    const invalidTypes = nodes
+      .filter((node) => !ALLOWED_COMPONENT_TYPES.has(node.type))
+      .map((node) => node.type);
+    assert(invalidTypes.length === 0, `invalid component types: ${sampleList(invalidTypes)}`);
+
+    const textDisplays = nodes.filter((node) => node.type === 10);
+    assert(textDisplays.length === 1, `found ${textDisplays.length} Text Display component(s)`);
+    const expectedContent = [
+      `-# ${expected.eyebrow}`,
+      `## ${expected.title}`,
+      expected.tagline,
+      "",
+      expected.sample,
+      "",
+      `-# ${expected.meta}`,
+    ].join("\n");
+    assert(
+      textDisplays[0].content === expectedContent,
+      `Text Display content is "${brief(textDisplays[0].content, 120)}"`
+    );
+
+    const thumbnails = nodes.filter((node) => node.type === 11);
+    assert(thumbnails.length === 1, `found ${thumbnails.length} Thumbnail component(s)`);
+    const thumbnail = thumbnails[0];
+    assert(
+      thumbnail.media !== null &&
+        typeof thumbnail.media === "object" &&
+        !Array.isArray(thumbnail.media),
+      "Thumbnail media is missing"
+    );
+    assert(
+      Object.keys(thumbnail.media).length === 1 &&
+        Object.prototype.hasOwnProperty.call(thumbnail.media, "url"),
+      `Thumbnail media keys are ${Object.keys(thumbnail.media).join(", ") || "none"}`
+    );
+    assert(
+      thumbnail.media.url === expected.logo,
+      `Thumbnail URL is "${thumbnail.media.url ?? "(missing)"}"`
+    );
+
+    const buttons = nodes.filter((node) => node.type === 2);
+    assert(buttons.length === 2, `found ${buttons.length} link button(s)`);
+    const buttonProblems = [];
+    for (const button of buttons) {
+      if (button.style !== 5) buttonProblems.push(`style ${button.style ?? "(missing)"}`);
+      const extra = Object.keys(button).filter((key) => !BUTTON_KEYS.has(key));
+      if (extra.length > 0) buttonProblems.push(`keys ${extra.join(",")}`);
+      if (typeof button.label !== "string" || button.label.length === 0) {
+        buttonProblems.push("empty label");
+      }
+      if (typeof button.url !== "string" || !button.url.startsWith("https://")) {
+        buttonProblems.push("invalid URL");
+      }
+    }
+    assert(buttonProblems.length === 0, `button problems: ${sampleList(buttonProblems)}`);
+
+    const actualButtons = buttons.map(({ label, url }) => ({ label, url }));
+    const expectedButtons = [
+      { label: expected.open, url: expected.home },
+      { label: expected.play, url: expected.playUrl },
+    ];
+    assert(
+      JSON.stringify(actualButtons) === JSON.stringify(expectedButtons),
+      `buttons are ${JSON.stringify(actualButtons)}`
+    );
+  });
+
   check(`home ${label}: meta description matches §9`, () => {
     const actual = metaContent(docFor(rel), "description");
     assert(actual === meta.description, `found "${actual ?? "(missing)"}"`);
@@ -1176,6 +1342,47 @@ function checkHome(lang) {
 }
 
 for (const lang of LOCALES) checkHome(lang);
+
+// ---------------------------------------------------------------------------
+// Social previews
+// ---------------------------------------------------------------------------
+
+check("social: OG image dimensions and alt text are complete on every content page", () => {
+  const pages = requireContentPages();
+  const problems = [];
+  for (const rel of pages) {
+    const doc = docFor(rel);
+    const lang = rel.startsWith("id/") ? "id" : "en";
+    const expectedAlt = `${HOME_META[lang].siteName} — ${DISCORD_EMBED[lang].tagline}`;
+    const width = metaContent(doc, "og:image:width");
+    const height = metaContent(doc, "og:image:height");
+    const type = metaContent(doc, "og:image:type");
+    const alt = metaContent(doc, "og:image:alt");
+    const twitterAlt = metaContent(doc, "twitter:image:alt");
+    if (width !== "1200") problems.push(`${rel} width "${width ?? "(missing)"}"`);
+    if (height !== "630") problems.push(`${rel} height "${height ?? "(missing)"}"`);
+    if (type !== "image/png") problems.push(`${rel} type "${type ?? "(missing)"}"`);
+    if (alt !== expectedAlt) problems.push(`${rel} alt "${alt ?? "(missing)"}"`);
+    if (twitterAlt !== expectedAlt) {
+      problems.push(`${rel} twitter alt "${twitterAlt ?? "(missing)"}"`);
+    }
+  }
+  assert(
+    problems.length === 0,
+    `${problems.length}/${pages.length} page(s): ${sampleList(problems, 5)}`
+  );
+});
+
+check("social: Discord component embed is scoped to localized home pages", () => {
+  const pages = requireContentPages().filter(
+    (rel) => rel !== "en/index.html" && rel !== "id/index.html"
+  );
+  const offenders = pages.filter((rel) => /id="discord:component-embed"/.test(readPage(rel)));
+  assert(
+    offenders.length === 0,
+    `${offenders.length} non-home page(s) carry it: ${sampleList(offenders)}`
+  );
+});
 
 // ---------------------------------------------------------------------------
 // Icons, brand assets, hygiene

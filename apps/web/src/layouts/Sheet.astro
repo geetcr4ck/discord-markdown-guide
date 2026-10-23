@@ -3,6 +3,7 @@ import type { Lang } from '../i18n/routes';
 import { switchLocale } from '../i18n/routes';
 import { t } from '../i18n/ui';
 import { SITE_IMAGE, SITE_IMAGE_ID } from '../constants';
+import { buildDiscordComponentEmbed } from '../lib/discord-component-embed';
 import SheetHeader from '../components/sheet-header.astro';
 import TitleBlock from '../components/title-block.astro';
 import '../style.css';
@@ -16,6 +17,7 @@ export interface Props {
   ogImage?: string;
   rail?: boolean;
   tapeFlag?: boolean;
+  discordEmbed?: boolean;
 }
 
 const {
@@ -26,6 +28,7 @@ const {
   canonicalPath,
   ogImage,
   tapeFlag = false,
+  discordEmbed = false,
 } = Astro.props;
 
 const currentLang: Lang = (lang || (Astro.currentLocale as Lang) || 'en');
@@ -48,6 +51,7 @@ const canonicalUrl = canonicalPath
 const defaultOgImage = currentLang === 'id' ? SITE_IMAGE_ID : SITE_IMAGE;
 const fullOgImage = new URL(ogImage ?? defaultOgImage, Astro.site).toString();
 const ogLocale = currentLang === 'id' ? 'id_ID' : 'en_US';
+const ogImageAlt = `${siteName} — ${translate('site.tagline')}`;
 ---
 
 <!doctype html>
@@ -118,6 +122,10 @@ const ogLocale = currentLang === 'id' ? 'id_ID' : 'en_US';
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={metaDescription} />
     <meta property="og:image" content={fullOgImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter -->
@@ -126,6 +134,17 @@ const ogLocale = currentLang === 'id' ? 'id_ID' : 'en_US';
     <meta property="twitter:title" content={pageTitle} />
     <meta property="twitter:description" content={metaDescription} />
     <meta property="twitter:image" content={fullOgImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+
+    <!-- Discord Components V2 link preview, only on the two localized home pages. -->
+    {discordEmbed && (
+      <script
+        id="discord:component-embed"
+        type="application/json"
+        is:inline
+        set:html={buildDiscordComponentEmbed(currentLang, Astro.site)}
+      ></script>
+    )}
   </head>
   <body class="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex flex-col justify-between">
     <a href="#main-content" class="skip-link">
