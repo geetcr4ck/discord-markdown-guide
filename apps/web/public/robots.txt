@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://discord-markdown-guide.pages.dev/sitemap-index.xml
